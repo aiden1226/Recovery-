@@ -24,12 +24,14 @@
   --green:#78c99a;
   --red:#ef7777;
 }
+
 [data-theme="charcoal"]{
   --bg:#161616;
   --card:#000;
   --raise:#1a1a1a;
   --line:#262626;
 }
+
 [data-theme="light"]{
   color-scheme:light;
   --bg:#cfcfcf;
@@ -42,9 +44,11 @@
   --green:#287b4b;
   --red:#b94040;
 }
+
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
+
 body{
   margin:0;
   background:var(--bg);
@@ -54,27 +58,32 @@ body{
   padding-top:env(safe-area-inset-top);
   padding-bottom:env(safe-area-inset-bottom);
 }
+
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-button:disabled{opacity:.6;cursor:wait}
+
 button:focus-visible,input:focus-visible,
 textarea:focus-visible,select:focus-visible{
   outline:2px solid var(--accent);
   outline-offset:3px;
 }
+
 h1,h2,h3{
   font-family:Archivo,Arial,sans-serif;
   margin:0;
 }
+
 h1{
-  font-size:clamp(42px,8vw,68px);
+  font-size:clamp(40px,8vw,68px);
   font-weight:800;
   letter-spacing:-4px;
   line-height:1;
 }
+
 h2{font-size:21px;font-weight:800;margin-bottom:7px}
 h3{font-size:16px}
 p{margin:0;line-height:1.6}
+
 svg{
   width:22px;height:22px;
   fill:none;stroke:currentColor;
@@ -83,6 +92,7 @@ svg{
   stroke-linejoin:round;
   flex-shrink:0;
 }
+
 .muted{color:var(--muted)}
 .small{font-size:.85rem}
 .green{color:var(--green)}
@@ -97,59 +107,81 @@ svg{
   justify-content:center;overflow:hidden;
   transition:opacity .8s,visibility .8s;
 }
+
 #intro.finished{
-  opacity:0;visibility:hidden;pointer-events:none;
+  opacity:0;visibility:hidden;
+  pointer-events:none;
 }
+
 .intro-glow{
-  position:absolute;width:480px;height:480px;
+  position:absolute;
+  width:480px;height:480px;
   border-radius:50%;
   background:radial-gradient(circle,rgba(100,180,145,.15),transparent 70%);
   animation:glow 3s ease-in-out infinite;
 }
+
 .intro-content{
-  position:relative;text-align:center;
+  position:relative;
+  text-align:center;
   width:min(380px,90vw);
   animation:introEnter 1s ease both;
 }
+
 .intro-orb{
-  position:relative;width:110px;height:110px;
+  position:relative;
+  width:110px;height:110px;
   margin:0 auto 28px;
   display:grid;place-items:center;
-  background:#141414;border:1px solid #333;
+  background:#141414;
+  border:1px solid #333;
   border-radius:32px;
   box-shadow:0 0 60px rgba(120,201,154,.12);
   animation:heartbeat 2s infinite;
 }
-.intro-orb svg{width:60px;height:60px;color:#78c99a}
+
+.intro-orb svg{
+  width:60px;height:60px;color:#78c99a;
+}
+
 .intro-orb::after{
-  content:"";position:absolute;inset:-12px;
+  content:"";position:absolute;
+  inset:-12px;
   border:1px solid rgba(120,201,154,.3);
   border-radius:40px;
   animation:pulseRing 2s infinite;
 }
+
 .intro-title{
   font-size:clamp(48px,13vw,72px);
   letter-spacing:-5px;
   animation:titleEnter 1s .2s both;
 }
+
 .intro-subtitle{
-  color:#999;font-size:15px;margin-top:10px;
+  color:#999;font-size:15px;
+  margin-top:10px;
   animation:titleEnter 1s .4s both;
 }
+
 .loading-track{
-  width:180px;height:3px;background:#222;
-  margin:35px auto 12px;border-radius:20px;
-  overflow:hidden;
+  width:180px;height:3px;
+  background:#222;
+  margin:35px auto 12px;
+  border-radius:20px;overflow:hidden;
 }
+
 .loading-fill{
   height:100%;background:#78c99a;
   border-radius:20px;
   animation:loading 2.6s ease forwards;
 }
+
 .intro-status{
   color:#777;font-size:11px;
   letter-spacing:2px;text-transform:uppercase;
 }
+
 .skip-intro{
   position:absolute;
   bottom:calc(25px + env(safe-area-inset-bottom));
@@ -157,6 +189,7 @@ svg{
   border:1px solid #333;color:#aaa;
   padding:10px 17px;border-radius:10px;
 }
+
 @keyframes loading{from{width:0}to{width:100%}}
 @keyframes introEnter{
   from{opacity:0;transform:scale(.9)}
@@ -182,7 +215,7 @@ svg{
   50%{transform:scale(1.2)}
 }
 
-/* DASHBOARD */
+/* LAYOUT */
 
 main{
   max-width:1100px;margin:auto;
@@ -191,6 +224,7 @@ main{
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:12px;
 }
+
 .card{
   position:relative;min-width:0;
   background:var(--card);
@@ -198,6 +232,7 @@ main{
   border-radius:18px;padding:24px;
   transition:transform .25s,border-color .25s,box-shadow .25s;
 }
+
 @media(hover:hover){
   .card:hover{
     transform:translateY(-3px);
@@ -205,19 +240,24 @@ main{
     box-shadow:0 12px 30px rgba(0,0,0,.12);
   }
 }
+
 .full{grid-column:1/-1}
+
 body.ready .card{
   animation:cardEnter .6s both;
   animation-delay:calc(var(--i,0)*65ms);
 }
+
 @keyframes cardEnter{
   from{opacity:0;translate:0 18px}
   to{opacity:1;translate:0 0}
 }
+
 .row{display:flex;align-items:center;gap:10px}
 .between{justify-content:space-between}
 .wrap{flex-wrap:wrap}
 .header{padding:30px;overflow:hidden}
+
 .header::before{
   content:"";position:absolute;
   right:-70px;top:-100px;
@@ -225,23 +265,28 @@ body.ready .card{
   background:radial-gradient(circle,rgba(120,201,154,.09),transparent 70%);
   pointer-events:none;
 }
+
 .header-description{margin-top:12px}
+
 .live-dot{
   width:7px;height:7px;border-radius:50%;
   background:var(--green);
   box-shadow:0 0 12px var(--green);
   animation:statusPulse 2s infinite;
 }
+
 @keyframes statusPulse{50%{opacity:.4}}
+
 .header-date{text-align:right}
+
 #clock{
   font-family:Archivo,sans-serif;
   font-size:26px;font-weight:800;
 }
+
 .version{
   color:var(--muted);font-size:11px;
-  padding:5px 9px;
-  border:1px solid var(--line);
+  padding:5px 9px;border:1px solid var(--line);
   border-radius:20px;flex-shrink:0;
 }
 
@@ -251,21 +296,33 @@ body.ready .card{
   padding:12px 18px;border-radius:12px;
   font-weight:600;transition:.2s;
 }
-.primary{background:#f0f0f0;color:#111;border:none}
-.primary:hover{background:#d5d5d5;transform:translateY(-2px)}
-[data-theme="light"] .primary{background:#111;color:white}
+
+.primary{
+  background:#f0f0f0;color:#111;border:none;
+}
+
+.primary:hover{
+  background:#d5d5d5;transform:translateY(-2px);
+}
+
+[data-theme="light"] .primary{
+  background:#111;color:white;
+}
+
 .secondary{
   background:var(--raise);color:var(--text);
   border:1px solid var(--line);
 }
+
 .secondary:hover{
   border-color:var(--muted);
   transform:translateY(-2px);
 }
+
 button:active{transform:scale(.97)}
 .wide{width:100%}
 
-/* STATUS */
+/* CURRENT STATUS */
 
 .status-display{
   display:flex;align-items:center;gap:20px;
@@ -273,24 +330,32 @@ button:active{transform:scale(.97)}
   border-radius:15px;background:var(--raise);
   border:1px solid var(--line);
 }
+
 .status-orb{
-  position:relative;width:65px;height:65px;
+  position:relative;
+  width:65px;height:65px;
   flex-shrink:0;display:grid;place-items:center;
   border-radius:50%;background:var(--line);
   color:var(--muted);transition:.4s;
 }
+
 .status-orb svg{width:30px;height:30px}
+
 .status-orb.active::after{
   content:"";position:absolute;inset:-5px;
-  border:1px solid currentColor;border-radius:50%;
+  border:1px solid currentColor;
+  border-radius:50%;
   animation:pulseRing 3s infinite;
 }
+
 #currentFeeling{
   font-family:Archivo,sans-serif;
   font-size:clamp(20px,4vw,30px);
   font-weight:800;margin:4px 0;
 }
+
 .feelings{display:grid;gap:8px;margin:20px 0}
+
 .feeling{
   display:flex;align-items:center;gap:14px;
   width:100%;padding:15px;
@@ -299,26 +364,32 @@ button:active{transform:scale(.97)}
   border-radius:13px;text-align:left;
   transition:.22s;
 }
+
 .feeling:hover{
   transform:translateX(4px);
   border-color:var(--level);
 }
+
 .feeling.selected{
   border-color:var(--level);
   box-shadow:inset 3px 0 var(--level);
 }
+
 .feeling-indicator{
   width:12px;height:12px;border-radius:50%;
   background:var(--level);
   box-shadow:0 0 12px var(--level);
 }
+
 .feeling-info{flex:1}
 .feeling-info strong{display:block;font-size:15px}
 .feeling-info small{color:var(--muted)}
+
 .radio{
   width:19px;height:19px;border-radius:50%;
   border:2px solid var(--line);
 }
+
 .feeling.selected .radio{border:5px solid var(--level)}
 
 /* INPUTS */
@@ -326,17 +397,21 @@ button:active{transform:scale(.97)}
 .field{
   width:100%;padding:13px 15px;
   border:1px solid var(--line);
-  border-radius:12px;background:var(--raise);
-  color:var(--text);
+  border-radius:12px;
+  background:var(--raise);color:var(--text);
 }
+
 .field::placeholder{color:var(--muted)}
 textarea.field{resize:vertical;min-height:100px}
+
 .field-label{
   display:block;margin:16px 0 8px;
   color:var(--muted);font-size:13px;
 }
+
 .input-row{display:flex;gap:8px;margin-top:15px}
 .input-row .field{flex:1;min-width:0}
+
 .form-status{
   min-height:18px;font-size:13px;
   color:var(--muted);margin-top:10px;
@@ -351,18 +426,25 @@ textarea.field{resize:vertical;min-height:100px}
   background:var(--raise);margin-bottom:15px;
   transition:transform .3s;
 }
-.card:hover .tracker-icon{transform:rotate(-8deg) scale(1.08)}
+
+.card:hover .tracker-icon{
+  transform:rotate(-8deg) scale(1.08);
+}
+
 .big-value{
   font-family:Archivo,sans-serif;
   font-size:36px;font-weight:800;
   letter-spacing:-1px;margin:20px 0 4px;
 }
+
 .tracker-sub{font-size:13px;color:var(--muted)}
+
 .symptoms{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:8px;margin:18px 0;
 }
+
 .symptom{
   display:flex;align-items:center;gap:9px;
   padding:12px;background:var(--raise);
@@ -370,17 +452,20 @@ textarea.field{resize:vertical;min-height:100px}
   border-radius:11px;cursor:pointer;
   transition:.2s;font-size:14px;
 }
+
 .symptom:hover{
   border-color:var(--muted);
   transform:translateY(-2px);
 }
+
 .symptom:has(input:checked){border-color:var(--accent)}
+
 .symptom input{
   accent-color:var(--accent);
   width:16px;height:16px;flex-shrink:0;
 }
 
-/* RECOVERY CHART */
+/* RECOVERY GRAPH */
 
 .chart-wrap{
   position:relative;margin-top:20px;
@@ -388,7 +473,11 @@ textarea.field{resize:vertical;min-height:100px}
   border-radius:14px;padding:14px;
   overflow:hidden;
 }
-#recoveryChart{display:block;width:100%;height:260px}
+
+#recoveryChart{
+  display:block;width:100%;height:260px;
+}
+
 .chart-empty{
   position:absolute;inset:0;
   display:grid;place-items:center;
@@ -403,90 +492,89 @@ textarea.field{resize:vertical;min-height:100px}
   background:#fff;display:grid;place-items:center;
   flex-shrink:0;box-shadow:0 4px 14px #0002;
 }
+
 .health-icon svg{
   width:30px;height:30px;fill:#ff365e;stroke:none;
 }
+
 .health-badge{
   display:inline-flex;align-items:center;gap:7px;
   color:var(--muted);background:var(--raise);
-  border:1px solid var(--line);border-radius:30px;
-  padding:8px 12px;font-size:12px;
+  border:1px solid var(--line);
+  border-radius:30px;padding:8px 12px;
+  font-size:12px;
 }
+
 .health-badge.connected{color:var(--green)}
+
 .health-badge::before{
   content:"";width:7px;height:7px;
   background:currentColor;border-radius:50%;
 }
+
 .sleep-summary{
   display:grid;grid-template-columns:1.4fr 1fr 1fr;
   gap:10px;margin-top:22px;
 }
+
 .sleep-tile{
   padding:20px;background:var(--raise);
   border:1px solid var(--line);
   border-radius:14px;min-width:0;
 }
+
 .sleep-tile svg{color:var(--muted);margin-bottom:12px}
+
 .sleep-tile strong{
   display:block;font-family:Archivo,sans-serif;
   font-size:clamp(20px,4vw,34px);
   letter-spacing:-1px;margin-top:8px;
   overflow-wrap:anywhere;
 }
+
 .sleep-chart{
   background:var(--raise);
   border:1px solid var(--line);
-  border-radius:14px;padding:20px;margin-top:14px;
+  border-radius:14px;padding:20px;
+  margin-top:14px;
 }
+
 .sleep-bar{
   display:flex;height:22px;overflow:hidden;
   border-radius:7px;margin:20px 0;
 }
+
 .sleep-bar div{transition:width .4s}
 .sleep-stage-list{display:grid;gap:10px}
-.sleep-stage{display:flex;align-items:center;gap:10px}
-.stage-dot{
-  width:10px;height:10px;border-radius:50%;
-  flex-shrink:0;
+
+.sleep-stage{
+  display:flex;align-items:center;gap:10px;
 }
+
+.stage-dot{
+  width:10px;height:10px;
+  border-radius:50%;flex-shrink:0;
+}
+
 .stage-track{
   height:6px;border-radius:6px;
   background:var(--line);flex:1;overflow:hidden;
 }
+
 .stage-fill{height:100%;border-radius:6px}
 .stage-name{min-width:55px;font-size:13px}
 .stage-duration{min-width:75px;text-align:right;font-size:13px}
+
 .health-actions{
-  display:grid;gap:8px;margin-top:20px;
+  display:flex;gap:8px;flex-wrap:wrap;
+  margin-top:20px;
 }
-#syncHealth,#finishSync{
-  min-height:48px;
-  display:flex;align-items:center;
-  justify-content:center;gap:10px;
-}
-.sync-panel{
-  padding:15px;margin-top:12px;
-  background:var(--raise);
-  border:1px solid var(--line);
-  border-radius:13px;
-}
-#syncMessage{
-  font-size:13px;line-height:1.6;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-.sync-spinner{
-  width:17px;height:17px;
-  border:2px solid currentColor;
-  border-right-color:transparent;
-  border-radius:50%;
-  animation:syncSpin .8s linear infinite;
-}
-@keyframes syncSpin{to{transform:rotate(360deg)}}
+
 .sleep-history{
   display:grid;gap:8px;max-height:300px;
   overflow-y:auto;margin-top:14px;
 }
+
 .sleep-history-item{
   display:flex;justify-content:space-between;
   align-items:center;gap:12px;
@@ -494,39 +582,53 @@ textarea.field{resize:vertical;min-height:100px}
   border:1px solid var(--line);
   border-radius:12px;padding:15px;
 }
-.sleep-history-item strong{font-family:Archivo,sans-serif}
 
-/* ACTIVITY HISTORY */
+.sleep-history-item strong{
+  font-family:Archivo,sans-serif;
+}
+
+/* HISTORY */
 
 .history-list{
   display:grid;gap:8px;margin-top:18px;
   max-height:420px;overflow-y:auto;
 }
+
 .history-item{
   background:var(--raise);
   border:1px solid var(--line);
   border-radius:12px;padding:15px;
   display:flex;align-items:flex-start;gap:12px;
 }
+
 .history-item:hover{border-color:var(--muted)}
+
 .history-icon{
   display:grid;place-items:center;
   width:36px;height:36px;border-radius:10px;
   background:var(--card);color:var(--muted);
   flex-shrink:0;
 }
+
 .history-info{flex:1;min-width:0}
+
 .history-info strong,.history-info p{
   overflow-wrap:anywhere;white-space:pre-wrap;
 }
+
 .history-info small{
   color:var(--muted);display:block;margin-top:5px;
 }
+
 .delete-btn{
   background:transparent;color:var(--muted);
   border:none;padding:7px;border-radius:8px;
 }
-.delete-btn:hover{background:var(--card);color:var(--red)}
+
+.delete-btn:hover{
+  background:var(--card);color:var(--red);
+}
+
 .empty{text-align:center;color:var(--muted);padding:30px 10px}
 
 /* GUIDANCE */
@@ -536,6 +638,7 @@ textarea.field{resize:vertical;min-height:100px}
   padding:14px 16px;border-radius:0 12px 12px 0;
   background:var(--raise);margin-top:12px;
 }
+
 .guidance p{font-size:14px;margin-top:5px}
 .guidance.urgent{border-left-color:var(--red)}
 .guidance.urgent strong{color:var(--red)}
@@ -548,6 +651,7 @@ textarea.field{resize:vertical;min-height:100px}
   border-radius:30px;padding:9px 17px;
   transition:.2s;
 }
+
 .theme-btn:hover{transform:translateY(-2px)}
 .theme-btn.active{background:var(--accent);color:var(--card)}
 
@@ -560,12 +664,17 @@ dialog{
   border-radius:22px;padding:24px;
   box-shadow:0 20px 70px #0005;
 }
-dialog::backdrop{background:#0009;backdrop-filter:blur(7px)}
+
+dialog::backdrop{
+  background:#0009;backdrop-filter:blur(7px);
+}
+
 .dialog-step{
   display:flex;gap:13px;align-items:flex-start;
   background:var(--raise);
   border-radius:13px;padding:15px;margin-top:12px;
 }
+
 .step-number{
   display:grid;place-items:center;
   width:28px;height:28px;border-radius:9px;
@@ -587,11 +696,14 @@ dialog::backdrop{background:#0009;backdrop-filter:blur(7px)}
   z-index:100;transition:.3s;
   max-width:90vw;text-align:center;
 }
+
 #toast.show{opacity:1;transform:translate(-50%,0)}
+
 footer{
   padding:0 20px 30px;color:var(--muted);
   font-size:13px;text-align:center;
 }
+
 @media(max-width:700px){
   main{grid-template-columns:1fr;padding-top:12px}
   .card{padding:18px}
@@ -603,12 +715,15 @@ footer{
   .sleep-tile:first-child{grid-column:1/-1}
   .sleep-tile{padding:16px}
   .sleep-chart{padding:15px}
-  input,textarea,select{font-size:16px!important}
+  .health-actions button{flex:1 1 130px}
+  input,textarea,select{font-size:16px}
 }
+
 @media(max-width:350px){
   .symptoms{grid-template-columns:1fr}
   .header h1{font-size:36px}
 }
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{
     animation:none!important;
@@ -620,8 +735,6 @@ footer{
 </head>
 
 <body>
-
-<!-- INTRO -->
 
 <div id="intro" role="dialog" aria-label="Welcome to Recovery">
   <div class="intro-glow"></div>
@@ -720,9 +833,7 @@ footer{
   <input class="field" id="otherSymptoms"
     maxlength="200" placeholder="Anything else?">
   <button class="primary wide" id="saveSymptoms"
-    style="margin-top:15px">
-    Save symptoms
-  </button>
+    style="margin-top:15px">Save symptoms</button>
   <p class="form-status" id="symptomStatus"></p>
 </section>
 
@@ -766,7 +877,9 @@ footer{
       </div>
       <div>
         <h2 style="margin-bottom:3px">Sleep tracker</h2>
-        <p class="muted small">Powered by Apple Health imports</p>
+        <p class="muted small">
+          Powered by Apple Health imports
+        </p>
       </div>
     </div>
     <span class="health-badge" id="healthStatus">
@@ -781,10 +894,10 @@ footer{
       </svg>
       <p class="muted small">Recorded sleep</p>
       <strong id="sleepDuration">—</strong>
-      <p class="muted small" id="sleepDate" style="margin-top:5px">
-        No sleep imported
-      </p>
+      <p class="muted small" id="sleepDate"
+        style="margin-top:5px">No sleep imported</p>
     </div>
+
     <div class="sleep-tile">
       <svg viewBox="0 0 24 24">
         <path d="M3 18v-7M21 18v-7M3 15h18M5 11V6h14v5"/>
@@ -793,6 +906,7 @@ footer{
       <p class="muted small">First sleep record</p>
       <strong id="bedtime">—</strong>
     </div>
+
     <div class="sleep-tile">
       <svg viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="4"/>
@@ -816,33 +930,31 @@ footer{
     </p>
   </div>
 
-  <!-- NEW V1.3 SYNC CONTROLS -->
+  <!-- MANUAL SYNC BUTTONS -->
 
   <div class="health-actions">
-    <button class="primary wide" id="syncHealth">
+    <button class="primary" id="connectHealth">
+      Connect Apple Health
+    </button>
+
+    <button class="secondary" id="syncHealth">
       Sync Apple Health
     </button>
-    <button class="secondary wide" id="connectHealth">
-      Connection Settings
+
+    <button class="secondary" id="importHealth">
+      Import sleep data
     </button>
   </div>
 
-  <div class="sync-panel" id="syncPanel" hidden>
-    <p id="syncMessage" class="muted" role="status"
-      aria-live="polite"></p>
-    <button class="primary wide" id="finishSync"
-      style="margin-top:12px" hidden>
-      Finish Sync
-    </button>
-    <button class="secondary wide" id="cancelSync"
-      style="margin-top:8px" hidden>
-      Cancel Sync
-    </button>
-  </div>
+  <p class="muted small" style="margin-top:12px">
+    Run Sick Sleep Sync, return to Recovery, and import
+    the copied sleep records.
+  </p>
 
   <p class="muted small" id="lastSync" style="margin-top:14px">
     No sleep data imported yet.
   </p>
+
   <p class="muted small" id="recordCount"></p>
 
   <div id="sleepHistorySection" hidden>
@@ -852,6 +964,11 @@ footer{
     </div>
     <div class="sleep-history" id="sleepHistory"></div>
   </div>
+
+  <button class="secondary danger" id="disconnectHealth"
+    style="margin-top:18px">
+    Disconnect &amp; clear imported sleep
+  </button>
 </section>
 
 <!-- TEMPERATURE -->
@@ -1003,13 +1120,14 @@ footer{
   <div class="history-list" id="historyList"></div>
 </section>
 
-<!-- GUIDANCE -->
+<!-- HEALTH GUIDANCE -->
 
 <section class="card full">
   <h2>Taking care of yourself</h2>
   <p class="muted small">
     General information for when you're feeling sick.
   </p>
+
   <div class="guidance">
     <strong>Rest and stay comfortable</strong>
     <p class="muted">
@@ -1018,6 +1136,7 @@ footer{
       when you're feeling unwell.
     </p>
   </div>
+
   <div class="guidance">
     <strong>When to get medical advice</strong>
     <p class="muted">
@@ -1027,6 +1146,7 @@ footer{
       a fever, pain or dehydration.
     </p>
   </div>
+
   <div class="guidance urgent">
     <strong>Emergency symptoms</strong>
     <p>
@@ -1036,6 +1156,7 @@ footer{
       Call 911 in the United States.
     </p>
   </div>
+
   <p class="muted small" style="margin-top:15px">
     Your sickness rating does not determine whether
     you need medical attention. This app is a personal
@@ -1077,14 +1198,14 @@ footer{
     your recovery or sleep records to a server.
   </p>
   <p class="muted small" style="margin-top:12px">
-    Recovery attempts to read your clipboard only during
-    a requested sleep sync or manual import. Sleep data
-    may remain on your clipboard afterward.
+    Clipboard access occurs only when you press Paste
+    from clipboard. Sleep data may remain on your
+    clipboard after importing.
   </p>
   <p class="muted small" style="margin-top:12px">
     Clearing imported sleep does not delete anything
     from Apple Health or revoke shortcut permissions.
-    Review the shortcut before granting access.
+    Review the shortcut's actions before granting access.
   </p>
   <button class="secondary danger" id="clearData"
     style="margin-top:18px">Clear all recovery data</button>
@@ -1092,7 +1213,7 @@ footer{
 
 </main>
 
-<!-- CONNECTION SETTINGS -->
+<!-- CONNECT APPLE HEALTH -->
 
 <dialog id="connectDialog">
   <div class="row">
@@ -1102,8 +1223,8 @@ footer{
       </svg>
     </div>
     <div>
-      <h2>Connection Settings</h2>
-      <p class="muted small">Apple Health · Home Screen Sync</p>
+      <h2>Apple Health</h2>
+      <p class="muted small">Connect your sleep data</p>
     </div>
   </div>
 
@@ -1114,7 +1235,6 @@ footer{
       <p class="muted small">
         Add the shortcut to your iPhone.
         Review its actions before granting permission.
-        The shared installer may contain an older version.
       </p>
       <button class="primary" id="installShortcut"
         style="margin-top:12px">Install Shortcut</button>
@@ -1124,9 +1244,9 @@ footer{
   <div class="dialog-step">
     <div class="step-number">2</div>
     <div>
-      <strong>Check your shortcut</strong>
+      <strong>Check the shortcut</strong>
       <p class="muted small">
-        Keep the name exactly Sick Sleep Sync.
+        Make sure it is named exactly Sick Sleep Sync.
         Its final action should be Copy to Clipboard.
         Remove URL and Open URLs actions if present.
       </p>
@@ -1136,10 +1256,10 @@ footer{
   <div class="dialog-step">
     <div class="step-number">3</div>
     <div>
-      <strong>Sync Apple Health</strong>
+      <strong>Sync your sleep records</strong>
       <p class="muted small">
-        Run the shortcut and allow read access to Sleep.
-        Wait until the shortcut has finished.
+        Run the shortcut and allow read access to Sleep
+        when requested. Wait until it finishes copying.
       </p>
       <button class="secondary" id="runShortcut"
         style="margin-top:12px">Run Sick Sleep Sync</button>
@@ -1149,36 +1269,23 @@ footer{
   <div class="dialog-step">
     <div class="step-number">4</div>
     <div>
-      <strong>Return to Recovery.</strong>
+      <strong>Import your sleep</strong>
       <p class="muted small">
-        Switch back to your Home Screen web app.
-        Recovery will attempt to import your sleep records.
-        Tap Finish Sync if automatic access is blocked.
+        Return to Recovery. Tap Import sleep data,
+        paste the copied records, and press Import.
       </p>
     </div>
   </div>
 
-  <div class="dialog-step">
-    <div class="step-number">5</div>
-    <div>
-      <strong>Manual import fallback</strong>
-      <p class="muted small">
-        Use manual import only if clipboard syncing fails.
-      </p>
-      <button class="secondary" id="connectImport"
-        style="margin-top:12px">Import sleep data</button>
-    </div>
+  <div class="row wrap" style="margin-top:20px">
+    <button class="primary" id="connectImport">
+      Import sleep data
+    </button>
+    <button class="secondary" id="closeConnect">Close</button>
   </div>
-
-  <button class="secondary danger wide" id="disconnectHealth"
-    style="margin-top:18px">
-    Disconnect &amp; clear imported sleep
-  </button>
-  <button class="secondary wide" id="closeConnect"
-    style="margin-top:8px">Close</button>
 </dialog>
 
-<!-- MANUAL IMPORT -->
+<!-- MANUAL IMPORT DIALOG -->
 
 <dialog id="importDialog">
   <h2>Import sleep data</h2>
@@ -1186,10 +1293,12 @@ footer{
     Paste the output from Sick Sleep Sync.
     JSON is not required.
   </p>
+
   <textarea class="field" id="sleepInput"
     style="min-height:180px;margin-top:18px"
     placeholder="Paste your sleep records here..."
     aria-label="Apple Health sleep records"></textarea>
+
   <div class="row wrap" style="margin-top:12px">
     <button class="secondary" id="pasteClipboard">
       Paste from clipboard
@@ -1197,6 +1306,7 @@ footer{
     <button class="primary" id="confirmImport">Import</button>
     <button class="secondary" id="closeImport">Close</button>
   </div>
+
   <p class="form-status" id="importStatus" role="status"></p>
 </dialog>
 
@@ -1213,14 +1323,9 @@ footer{
 
 const $ = id => document.getElementById(id);
 
-/* ORIGINAL STORAGE KEYS */
-
 const STORAGE_KEY = "sick-recovery-data-v1";
 const THEME_KEY = "sick-theme-v1";
 const HEALTH_KEY = "sick-apple-health-v1";
-
-const PENDING_KEY = "recovery-pending-sync-v13";
-const SYNC_TIMEOUT = 10 * 60 * 1000;
 
 const SHORTCUT_URL =
   "https://www.icloud.com/shortcuts/e6f8de2f84e64ef79f5e9829ec404930";
@@ -1280,12 +1385,6 @@ let health = {
   records:[],
   lastSync:null
 };
-
-let pendingTime = 0;
-let syncBusy = false;
-let syncAttempted = false;
-let leftApp = false;
-let syncGeneration = 0;
 
 /* HELPERS */
 
@@ -1398,7 +1497,9 @@ function loadData(){
 
 function persistData(){
   try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(entries));
+    localStorage.setItem(
+      STORAGE_KEY,JSON.stringify(entries)
+    );
     storageAvailable = true;
   }catch{
     storageAvailable = false;
@@ -1410,7 +1511,9 @@ function persistData(){
 
 function persistHealth(){
   try{
-    localStorage.setItem(HEALTH_KEY,JSON.stringify(health));
+    localStorage.setItem(
+      HEALTH_KEY,JSON.stringify(health)
+    );
     return true;
   }catch{
     storageAvailable = false;
@@ -1497,6 +1600,7 @@ function startIntro(){
   $("intro").setAttribute("aria-hidden","false");
 
   const fill = document.querySelector(".loading-fill");
+
   fill.style.animation = "none";
   void fill.offsetWidth;
   fill.style.animation = "";
@@ -1544,6 +1648,7 @@ function renderFeelings(){
 
   levels.forEach((level,index)=>{
     const button = make("button","feeling");
+
     button.style.setProperty("--level",level.color);
 
     button.setAttribute(
@@ -1580,7 +1685,8 @@ function renderFeelings(){
 
 $("saveFeeling").onclick = ()=>{
   if(selectedFeeling===null){
-    setStatus("feelingStatus","Select how you're feeling first.");
+    setStatus("feelingStatus",
+      "Select how you're feeling first.");
     return;
   }
 
@@ -1607,9 +1713,11 @@ $("saveSymptoms").onclick = ()=>{
   ].map(input=>input.value);
 
   const other = $("otherSymptoms").value.trim();
+
   if(other) selected.push(other);
 
   addEntry("symptoms",{symptoms:selected});
+
   $("otherSymptoms").value = "";
 
   setStatus("symptomStatus",selected.length
@@ -1625,11 +1733,13 @@ $("saveTemperature").onclick = ()=>{
   const unit = $("temperatureUnit").value;
 
   if(!raw || !Number.isFinite(value)){
-    setStatus("temperatureStatus","Enter a valid thermometer reading.");
+    setStatus("temperatureStatus",
+      "Enter a valid thermometer reading.");
     return;
   }
 
-  const celsius = unit==="F" ? (value-32)*5/9 : value;
+  const celsius = unit==="F"
+    ? (value-32)*5/9 : value;
 
   if(celsius<25 || celsius>46){
     setStatus("temperatureStatus",
@@ -1696,6 +1806,7 @@ $("saveMedicine").onclick = ()=>{
   }
 
   addEntry("medicine",{name,notes});
+
   $("medicineName").value = "";
   $("medicineNotes").value = "";
 
@@ -1716,6 +1827,88 @@ $("saveJournal").onclick = ()=>{
   addEntry("journal",{text});
   $("journalInput").value = "";
   setStatus("journalStatus","Journal entry saved.");
+};
+
+/* MANUAL APPLE HEALTH CONNECTION */
+
+$("connectHealth").onclick = ()=>{
+  $("connectDialog").showModal();
+};
+
+$("closeConnect").onclick = ()=>{
+  $("connectDialog").close();
+};
+
+$("installShortcut").onclick = ()=>{
+  window.open(SHORTCUT_URL,"_blank","noopener,noreferrer");
+};
+
+function runShortcut(){
+  if($("connectDialog").open){
+    $("connectDialog").close();
+  }
+
+  window.location.href =
+    "shortcuts://run-shortcut?name="+
+    encodeURIComponent(SHORTCUT_NAME);
+}
+
+$("runShortcut").onclick = runShortcut;
+$("syncHealth").onclick = runShortcut;
+
+/* MANUAL IMPORT */
+
+function openImport(){
+  $("sleepInput").value = "";
+  $("importStatus").textContent = "";
+  $("importStatus").style.color = "";
+  $("importDialog").showModal();
+}
+
+$("importHealth").onclick = openImport;
+
+$("connectImport").onclick = ()=>{
+  $("connectDialog").close();
+  openImport();
+};
+
+$("closeImport").onclick = ()=>{
+  $("sleepInput").value = "";
+  $("importDialog").close();
+};
+
+$("importDialog").addEventListener("close",()=>{
+  $("sleepInput").value = "";
+});
+
+function importStatus(message,error=false){
+  $("importStatus").textContent = message;
+
+  $("importStatus").style.color = error
+    ? "var(--red)" : "var(--green)";
+}
+
+$("pasteClipboard").onclick = async ()=>{
+  try{
+    const text = await navigator.clipboard.readText();
+
+    if(!$("importDialog").open) return;
+
+    $("sleepInput").value = text;
+
+    importStatus(
+      text
+        ? "Clipboard pasted. Press Import."
+        : "Your clipboard is empty.",
+      !text
+    );
+
+  }catch{
+    importStatus(
+      "Tap and hold inside the text box, then select Paste.",
+      true
+    );
+  }
 };
 
 /* APPLE DATE PARSER */
@@ -1741,10 +1934,14 @@ function parseAppleDate(value){
   );
 
   if(match){
-    const month = months[match[1].slice(0,3).toLowerCase()];
+    const month =
+      months[match[1].slice(0,3).toLowerCase()];
+
     const day = Number(match[2]);
     const year = Number(match[3]);
+
     let hour = Number(match[4]);
+
     const minute = Number(match[5]);
     const second = Number(match[6]||0);
     const period = match[7].toUpperCase();
@@ -1759,7 +1956,9 @@ function parseAppleDate(value){
     if(hour===12) hour=0;
     if(period==="PM") hour+=12;
 
-    const date = new Date(year,month,day,hour,minute,second);
+    const date = new Date(
+      year,month,day,hour,minute,second
+    );
 
     if(date.getFullYear()!==year ||
       date.getMonth()!==month ||
@@ -1774,6 +1973,8 @@ function parseAppleDate(value){
 
   return Date.parse(text.replace(/\s+at\s+/i," "));
 }
+
+/* SLEEP STAGES */
 
 function normalizeStage(value){
   const v = cleanText(value).toLowerCase();
@@ -1799,7 +2000,7 @@ function normalizeStage(value){
   return null;
 }
 
-/* SLEEP RECORD PARSER */
+/* PLAIN TEXT IMPORTER */
 
 function parseSleep(text){
   const records = [];
@@ -1810,6 +2011,7 @@ function parseSleep(text){
 
   for(const rawLine of lines){
     const line = cleanText(rawLine);
+
     if(!line) continue;
 
     let parts = line.split("|").map(cleanText);
@@ -1819,7 +2021,10 @@ function parseSleep(text){
         /^([a-z]+\.?\s+\d{1,2},?\s+\d{4}\s+(?:at\s+)?\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM))\s*([a-z]+\.?\s+\d{1,2},?\s+\d{4}\s+(?:at\s+)?\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM))\s*(.+)$/i;
 
       const match = line.match(pattern);
-      if(match) parts = [match[1],match[2],match[3]];
+
+      if(match){
+        parts = [match[1],match[2],match[3]];
+      }
     }
 
     if(parts.length!==3){
@@ -1855,29 +2060,30 @@ function parseSleep(text){
   return {records,skipped,zeroLength};
 }
 
-/* SHARED SLEEP IMPORT ENGINE */
+/* CONFIRM MANUAL IMPORT */
 
-function mergeSleepRecords(text,strict=false){
-  if(typeof text!=="string" || !text.trim()){
-    throw new Error("No sleep data found in the clipboard.");
+$("confirmImport").onclick = ()=>{
+  const text = $("sleepInput").value.trim();
+
+  if(!text){
+    importStatus("Paste your sleep data first.",true);
+    return;
   }
 
   if(text.length>1000000){
-    throw new Error("The import is too large.");
+    importStatus("The import is too large.",true);
+    return;
   }
 
   const result = parseSleep(text);
 
   if(!result.records.length){
-    throw new Error(
-      "No readable sleep records were found. Run Sick Sleep Sync again."
+    importStatus(
+      "No readable sleep records were found. "+
+      "Run Sick Sleep Sync and paste its plain-text output.",
+      true
     );
-  }
-
-  if(strict && result.skipped){
-    throw new Error(
-      "Some records could not be read. Use manual import to review them."
-    );
+    return;
   }
 
   const unique = new Map();
@@ -1902,7 +2108,8 @@ function mergeSleepRecords(text,strict=false){
   const duplicates = result.records.length-added;
 
   health = {
-    records:[...unique.values()].sort((a,b)=>b.end-a.end),
+    records:[...unique.values()]
+      .sort((a,b)=>b.end-a.end),
     lastSync:new Date().toISOString()
   };
 
@@ -1910,336 +2117,37 @@ function mergeSleepRecords(text,strict=false){
 
   renderSleep();
 
-  return {
-    added,
-    duplicates,
-    skipped:result.skipped,
-    zeroLength:result.zeroLength,
-    saved
-  };
-}
-
-/* V1.3 HOME SCREEN SYNC */
-
-function syncStatus(message,type=""){
-  $("syncPanel").hidden = false;
-  $("syncMessage").textContent = message;
-
-  $("syncMessage").style.color =
-    type==="success" ? "var(--green)" :
-    type==="error" ? "var(--red)" :
-    "var(--muted)";
-}
-
-function markPending(){
-  pendingTime = Date.now();
-
-  try{
-    localStorage.setItem(PENDING_KEY,String(pendingTime));
-  }catch{}
-}
-
-function hasPending(){
-  let time = pendingTime;
-
-  try{
-    time = Number(localStorage.getItem(PENDING_KEY)) || time;
-  }catch{}
-
-  const age = Date.now()-time;
-
-  return time>0 && age>=0 && age<SYNC_TIMEOUT;
-}
-
-function clearPending(){
-  pendingTime = 0;
-  leftApp = false;
-  syncAttempted = false;
-  syncGeneration++;
-
-  try{
-    localStorage.removeItem(PENDING_KEY);
-  }catch{}
-}
-
-function showPendingControls(show){
-  $("finishSync").hidden = !show;
-  $("cancelSync").hidden = !show;
-}
-
-function setSyncBusy(value){
-  syncBusy = value;
-  $("syncHealth").disabled = value;
-  $("finishSync").disabled = value;
-  $("connectHealth").disabled = value;
-
-  $("syncHealth").innerHTML = value
-    ? '<span class="sync-spinner"></span>Importing sleep data...'
-    : "Sync Apple Health";
-}
-
-function startSync(){
-  if(syncBusy) return;
-
-  clearPending();
-  markPending();
-
-  syncAttempted = false;
-  leftApp = false;
-
-  showPendingControls(true);
-
-  syncStatus(
-    "Run Sick Sleep Sync, then switch back to Recovery. " +
-    "Wait until the shortcut has finished."
-  );
-
-  window.location.href =
-    "shortcuts://run-shortcut?name="+
-    encodeURIComponent(SHORTCUT_NAME);
-}
-
-async function completeSync(){
-  if(syncBusy) return;
-
-  if(!hasPending()){
-    clearPending();
-    showPendingControls(false);
-    syncStatus(
-      "Sync expired. Press Sync Apple Health again.",
-      "error"
-    );
-    return;
-  }
-
-  const generation = syncGeneration;
-
-  setSyncBusy(true);
-  syncStatus("Reading sleep records...");
-
-  try{
-    if(!navigator.clipboard?.readText){
-      throw new Error("Clipboard access is unavailable.");
-    }
-
-    const text = await navigator.clipboard.readText();
-
-    if(generation!==syncGeneration) return;
-
-    if(!hasPending()){
-      clearPending();
-      showPendingControls(false);
-      syncStatus("Sync expired. Please try again.","error");
-      return;
-    }
-
-    const result = mergeSleepRecords(text,true);
-
-    clearPending();
-    showPendingControls(false);
-
-    if(!result.saved){
-      syncStatus(
-        "Sleep imported for this session only. Local storage failed.",
-        "error"
-      );
-      return;
-    }
-
-    let message = result.added
-      ? "Sync complete. "+result.added+" new sleep records imported."
-      : "Sync complete. No new records found.";
-
-    if(result.duplicates){
-      message += "\n"+result.duplicates+" duplicate records ignored.";
-    }
-
-    syncStatus(message,"success");
-    showToast("Apple Health synced");
-
-  }catch(error){
-    if(generation!==syncGeneration) return;
-
-    showPendingControls(true);
-
-    syncStatus(
-      "Automatic import could not finish. " +
-      "Make sure the shortcut has completed, then tap Finish Sync. " +
-      "Allow paste access if requested. Manual import is available in Connection Settings.",
-      "error"
-    );
-
-  }finally{
-    setSyncBusy(false);
-  }
-}
-
-function cancelSync(){
-  clearPending();
-  showPendingControls(false);
-  syncStatus("Sync cancelled.");
-}
-
-function onReturn(){
-  if(document.visibilityState!=="visible") return;
-
-  updateClock();
-  renderSummary();
-
-  if(!hasPending()){
-    if(pendingTime){
-      clearPending();
-      showPendingControls(false);
-      syncStatus("Sync expired. Please start again.","error");
-    }
-    return;
-  }
-
-  showPendingControls(true);
-
-  if(!leftApp || syncAttempted || syncBusy) return;
-
-  syncAttempted = true;
-
-  syncStatus("Welcome back. Completing Apple Health sync...");
-
-  completeSync();
-}
-
-document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="hidden"){
-    if(hasPending()) leftApp = true;
-  }else{
-    onReturn();
-  }
-});
-
-window.addEventListener("pagehide",()=>{
-  if(hasPending()) leftApp = true;
-});
-
-window.addEventListener("pageshow",onReturn);
-window.addEventListener("focus",onReturn);
-
-$("syncHealth").onclick = startSync;
-$("finishSync").onclick = completeSync;
-$("cancelSync").onclick = cancelSync;
-
-/* CONNECTION SETTINGS */
-
-$("connectHealth").onclick = ()=>{
-  $("connectDialog").showModal();
-};
-
-$("closeConnect").onclick = ()=>{
-  $("connectDialog").close();
-};
-
-$("installShortcut").onclick = ()=>{
-  window.open(SHORTCUT_URL,"_blank","noopener,noreferrer");
-};
-
-$("runShortcut").onclick = ()=>{
-  $("connectDialog").close();
-  startSync();
-};
-
-/* MANUAL IMPORT FALLBACK */
-
-function openImport(){
   $("sleepInput").value = "";
-  $("importStatus").textContent = "";
-  $("importStatus").style.color = "";
-  $("importDialog").showModal();
-}
 
-$("connectImport").onclick = ()=>{
-  $("connectDialog").close();
-  clearPending();
-  showPendingControls(false);
-  $("syncPanel").hidden = true;
-  openImport();
-};
+  let message =
+    "Import successful!\n"+
+    added+" new sleep records added.";
 
-$("closeImport").onclick = ()=>{
-  $("sleepInput").value = "";
-  $("importDialog").close();
-};
-
-$("importDialog").addEventListener("close",()=>{
-  $("sleepInput").value = "";
-});
-
-function importStatus(message,error=false){
-  $("importStatus").textContent = message;
-  $("importStatus").style.color = error
-    ? "var(--red)"
-    : "var(--green)";
-}
-
-$("pasteClipboard").onclick = async ()=>{
-  try{
-    const text = await navigator.clipboard.readText();
-
-    if(!$("importDialog").open) return;
-
-    $("sleepInput").value = text;
-
-    importStatus(
-      text ? "Clipboard pasted. Press Import."
-        : "Your clipboard is empty.",
-      !text
-    );
-
-  }catch{
-    importStatus(
-      "Tap and hold inside the text box, then select Paste.",
-      true
-    );
+  if(duplicates){
+    message += "\n"+duplicates+
+      " duplicate records ignored.";
   }
-};
 
-$("confirmImport").onclick = ()=>{
-  try{
-    const result = mergeSleepRecords(
-      $("sleepInput").value,false
-    );
-
-    $("sleepInput").value = "";
-
-    let message =
-      "Import successful!\n"+
-      result.added+" new sleep records added.";
-
-    if(result.duplicates){
-      message += "\n"+result.duplicates+
-        " duplicate records ignored.";
-    }
-
-    if(result.zeroLength){
-      message += "\n"+result.zeroLength+
-        " zero-duration records ignored.";
-    }
-
-    if(result.skipped){
-      message += "\n"+result.skipped+
-        " unreadable records skipped.";
-    }
-
-    if(!result.saved){
-      message += "\nBrowser storage failed. "+
-        "Records may disappear after refreshing.";
-    }
-
-    importStatus(message,!result.saved);
-
-    showToast(result.saved
-      ? "Sleep data imported"
-      : "Sleep imported for this session only");
-
-  }catch(error){
-    importStatus(error.message,true);
+  if(result.zeroLength){
+    message += "\n"+result.zeroLength+
+      " zero-duration records ignored.";
   }
+
+  if(result.skipped){
+    message += "\n"+result.skipped+
+      " unreadable records skipped.";
+  }
+
+  if(!saved){
+    message += "\nBrowser storage failed. "+
+      "Records may disappear after refreshing.";
+  }
+
+  importStatus(message,!saved);
+
+  showToast(saved
+    ? "Sleep data imported"
+    : "Sleep imported for this session only");
 };
 
 /* SLEEP SESSION CALCULATIONS */
@@ -2287,7 +2195,9 @@ function buildSessions(records){
         r.start<b && r.end>a
       );
 
-      const stages = [...new Set(active.map(r=>r.stage))];
+      const stages = [...new Set(
+        active.map(r=>r.stage)
+      )];
 
       const specific = stages.filter(s=>
         ["REM","Core","Deep"].includes(s)
@@ -2299,21 +2209,31 @@ function buildSessions(records){
         chosen = "Awake";
       }else if(specific.length===1){
         chosen = specific[0];
-      }else if(specific.length>1 || stages.includes("Asleep")){
+      }else if(
+        specific.length>1 ||
+        stages.includes("Asleep")
+      ){
         chosen = "Asleep";
       }
 
-      if(chosen) totals[chosen] += (b-a)/60000;
+      if(chosen){
+        totals[chosen] += (b-a)/60000;
+      }
     }
 
     return {
       start:group.start,
       end:group.end,
       totals,
-      asleep:totals.REM+totals.Core+totals.Deep+totals.Asleep
+      asleep:
+        totals.REM+
+        totals.Core+
+        totals.Deep+
+        totals.Asleep
     };
 
-  }).filter(s=>s.asleep>0).sort((a,b)=>b.end-a.end);
+  }).filter(s=>s.asleep>0)
+    .sort((a,b)=>b.end-a.end);
 }
 
 /* SLEEP DASHBOARD */
@@ -2329,14 +2249,16 @@ function renderSleep(){
     "connected",Boolean(health.lastSync)
   );
 
-  $("lastSync").textContent = health.lastSync
-    ? "Last imported: "+formatTime(health.lastSync)
-    : "No sleep data imported yet.";
+  $("lastSync").textContent =
+    health.lastSync
+      ? "Last imported: "+formatTime(health.lastSync)
+      : "No sleep data imported yet.";
 
-  $("recordCount").textContent = health.records.length
-    ? health.records.length+" saved records · "+
-      sessions.length+" estimated sleep sessions"
-    : "";
+  $("recordCount").textContent =
+    health.records.length
+      ? health.records.length+" saved records · "+
+        sessions.length+" estimated sleep sessions"
+      : "";
 
   $("sleepStages").replaceChildren();
   $("sleepLegend").replaceChildren();
@@ -2350,9 +2272,10 @@ function renderSleep(){
     $("bedtime").textContent = "—";
     $("wakeTime").textContent = "—";
 
-    $("sleepDate").textContent = health.lastSync
-      ? "No asleep intervals found"
-      : "No sleep imported";
+    $("sleepDate").textContent =
+      health.lastSync
+        ? "No asleep intervals found"
+        : "No sleep imported";
 
     return;
   }
@@ -2369,39 +2292,42 @@ function renderSleep(){
   const total = Object.values(recent.totals)
     .reduce((a,b)=>a+b,0);
 
-  Object.entries(recent.totals).forEach(([stage,minutes])=>{
-    if(minutes<=0) return;
+  Object.entries(recent.totals)
+    .forEach(([stage,minutes])=>{
+      if(minutes<=0) return;
 
-    const percent = minutes/total*100;
-    const segment = make("div");
+      const percent = minutes/total*100;
 
-    segment.style.width = percent+"%";
-    segment.style.background = stageColors[stage];
-    segment.title = stage+": "+duration(minutes);
+      const segment = make("div");
 
-    $("sleepStages").append(segment);
+      segment.style.width = percent+"%";
+      segment.style.background = stageColors[stage];
+      segment.title = stage+": "+duration(minutes);
 
-    const row = make("div","sleep-stage");
-    const dot = make("span","stage-dot");
+      $("sleepStages").append(segment);
 
-    dot.style.background = stageColors[stage];
+      const row = make("div","sleep-stage");
 
-    const name = make("span","stage-name",stage);
-    const track = make("div","stage-track");
-    const fill = make("div","stage-fill");
+      const dot = make("span","stage-dot");
+      dot.style.background = stageColors[stage];
 
-    fill.style.width = percent+"%";
-    fill.style.background = stageColors[stage];
+      const name = make("span","stage-name",stage);
 
-    track.append(fill);
+      const track = make("div","stage-track");
+      const fill = make("div","stage-fill");
 
-    row.append(
-      dot,name,track,
-      make("span","stage-duration",duration(minutes))
-    );
+      fill.style.width = percent+"%";
+      fill.style.background = stageColors[stage];
 
-    $("sleepLegend").append(row);
-  });
+      track.append(fill);
+
+      row.append(
+        dot,name,track,
+        make("span","stage-duration",duration(minutes))
+      );
+
+      $("sleepLegend").append(row);
+    });
 
   sessions.slice(0,30).forEach(session=>{
     const item = make("div","sleep-history-item");
@@ -2414,11 +2340,16 @@ function renderSleep(){
         })
       ),
       make("p","muted small",
-        clockTime(session.start)+" – "+clockTime(session.end)
+        clockTime(session.start)+" – "+
+        clockTime(session.end)
       )
     );
 
-    item.append(info,make("strong","",duration(session.asleep)));
+    item.append(
+      info,
+      make("strong","",duration(session.asleep))
+    );
+
     $("sleepHistory").append(item);
   });
 }
@@ -2436,16 +2367,12 @@ $("disconnectHealth").onclick = ()=>{
     return;
   }
 
-  clearPending();
-  showPendingControls(false);
-  $("syncPanel").hidden = true;
-
-  health = {records:[],lastSync:null};
+  health = {
+    records:[],
+    lastSync:null
+  };
 
   renderSleep();
-
-  $("connectDialog").close();
-
   showToast("Imported sleep data cleared");
 };
 
@@ -2458,15 +2385,19 @@ function renderSummary(){
   if(level){
     $("currentFeeling").textContent = level.name;
     $("currentFeeling").style.color = level.color;
+
     $("statusOrb").style.color = level.color;
     $("statusOrb").classList.add("active");
+
     $("lastCheckin").textContent =
       "Recorded "+formatTime(feeling.time);
   }else{
     $("currentFeeling").textContent = "Not recorded";
     $("currentFeeling").style.color = "";
+
     $("statusOrb").style.color = "";
     $("statusOrb").classList.remove("active");
+
     $("lastCheckin").textContent =
       "Complete a check-in to get started.";
   }
@@ -2478,7 +2409,9 @@ function renderSummary(){
     let value = Number(temperature.value);
 
     if(temperature.unit!==unit){
-      value = unit==="F" ? value*9/5+32 : (value-32)*5/9;
+      value = unit==="F"
+        ? value*9/5+32
+        : (value-32)*5/9;
     }
 
     $("temperatureValue").textContent =
@@ -2488,7 +2421,8 @@ function renderSummary(){
       formatTime(temperature.time);
   }else{
     $("temperatureValue").textContent = "—";
-    $("temperatureTime").textContent = "No readings recorded";
+    $("temperatureTime").textContent =
+      "No readings recorded";
   }
 
   const water = roundValue(todayTotal("water"));
@@ -2526,7 +2460,8 @@ function drawChart(){
     levels[entry.level]
   );
 
-  $("checkinCount").textContent = checkins.length+" check-ins";
+  $("checkinCount").textContent =
+    checkins.length+" check-ins";
 
   const points = checkins.slice(0,14).reverse();
 
@@ -2537,6 +2472,7 @@ function drawChart(){
   if(!points.length || width<150) return;
 
   const style = getComputedStyle(document.documentElement);
+
   const muted = style.getPropertyValue("--muted").trim();
   const line = style.getPropertyValue("--line").trim();
 
@@ -2570,6 +2506,7 @@ function drawChart(){
     x:points.length===1
       ? left+graphWidth/2
       : left+index/(points.length-1)*graphWidth,
+
     y:top+(4-entry.level)/4*graphHeight,
     entry
   }));
@@ -2590,10 +2527,12 @@ function drawChart(){
     });
 
     context.lineTo(
-      coordinates[coordinates.length-1].x,height-bottom
+      coordinates[coordinates.length-1].x,
+      height-bottom
     );
 
     context.lineTo(coordinates[0].x,height-bottom);
+
     context.closePath();
     context.fillStyle = gradient;
     context.fill();
@@ -2613,8 +2552,12 @@ function drawChart(){
 
   coordinates.forEach((point,index)=>{
     context.beginPath();
+
     context.arc(point.x,point.y,4.5,0,Math.PI*2);
-    context.fillStyle = levels[point.entry.level].color;
+
+    context.fillStyle =
+      levels[point.entry.level].color;
+
     context.fill();
 
     if(index===0 || index===coordinates.length-1){
@@ -2625,9 +2568,10 @@ function drawChart(){
 
       context.fillStyle = muted;
 
-      context.textAlign = coordinates.length===1
-        ? "center"
-        : index===0?"left":"right";
+      context.textAlign =
+        coordinates.length===1
+          ? "center"
+          : index===0?"left":"right";
 
       context.fillText(label,point.x,height-12);
     }
@@ -2643,22 +2587,29 @@ window.addEventListener("resize",drawChart);
 const historyIcons = {
   feeling:
     '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+
   symptoms:
     '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/>',
+
   temperature:
     '<path d="M9 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Z"/>',
+
   water:
     '<path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/>',
+
   rest:
     '<path d="M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11Z"/>',
+
   medicine:
     '<rect x="6" y="4" width="12" height="17" rx="3"/><path d="M9 13h6M12 10v6"/>',
+
   journal:
     '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'
 };
 
 function describeEntry(entry){
   switch(entry.type){
+
     case "feeling":
       return [
         "Sickness check-in",
@@ -2668,19 +2619,29 @@ function describeEntry(entry){
     case "symptoms":
       return [
         "Symptoms",
-        Array.isArray(entry.symptoms) && entry.symptoms.length
+        Array.isArray(entry.symptoms) &&
+        entry.symptoms.length
           ? entry.symptoms.join(", ")
           : "No symptoms reported"
       ];
 
     case "temperature":
-      return ["Temperature",entry.value+"°"+entry.unit];
+      return [
+        "Temperature",
+        entry.value+"°"+entry.unit
+      ];
 
     case "water":
-      return ["Hydration",roundValue(entryAmount(entry))+" cup(s)"];
+      return [
+        "Hydration",
+        roundValue(entryAmount(entry))+" cup(s)"
+      ];
 
     case "rest":
-      return ["Rest",roundValue(entryAmount(entry))+" hour(s)"];
+      return [
+        "Rest",
+        roundValue(entryAmount(entry))+" hour(s)"
+      ];
 
     case "medicine":
       return [
@@ -2707,7 +2668,9 @@ function renderHistory(){
   );
 
   if(!filtered.length){
-    list.append(make("div","empty","No recorded activity yet."));
+    list.append(
+      make("div","empty","No recorded activity yet.")
+    );
     return;
   }
 
@@ -2719,9 +2682,11 @@ function renderHistory(){
       ? historyIcons[entry.type]
       : historyIcons.journal;
 
-    icon.innerHTML = '<svg viewBox="0 0 24 24">'+path+'</svg>';
+    icon.innerHTML =
+      '<svg viewBox="0 0 24 24">'+path+'</svg>';
 
     const info = make("div","history-info");
+
     const [title,description] = describeEntry(entry);
 
     const detail = make("p","muted small",description);
@@ -2767,12 +2732,16 @@ function applyTheme(theme){
 
   document.documentElement.dataset.theme = theme;
 
-  document.querySelectorAll(".theme-btn").forEach(button=>{
-    const active = button.dataset.theme===theme;
+  document.querySelectorAll(".theme-btn")
+    .forEach(button=>{
+      const active = button.dataset.theme===theme;
 
-    button.classList.toggle("active",active);
-    button.setAttribute("aria-pressed",String(active));
-  });
+      button.classList.toggle("active",active);
+
+      button.setAttribute(
+        "aria-pressed",String(active)
+      );
+    });
 
   try{
     localStorage.setItem(THEME_KEY,theme);
@@ -2781,9 +2750,12 @@ function applyTheme(theme){
   drawChart();
 }
 
-document.querySelectorAll(".theme-btn").forEach(button=>{
-  button.onclick = ()=>applyTheme(button.dataset.theme);
-});
+document.querySelectorAll(".theme-btn")
+  .forEach(button=>{
+    button.onclick = ()=>{
+      applyTheme(button.dataset.theme);
+    };
+  });
 
 /* CLEAR RECOVERY DATA */
 
@@ -2834,9 +2806,17 @@ function renderDashboard(){
   drawChart();
 }
 
-document.querySelectorAll(".card").forEach((card,index)=>{
-  card.style.setProperty("--i",Math.min(index,10));
-});
+document.querySelectorAll(".card")
+  .forEach((card,index)=>{
+    card.style.setProperty("--i",Math.min(index,10));
+  });
+
+/* REMOVE OLD AUTOMATIC SYNC FLAGS ONLY */
+
+try{
+  localStorage.removeItem("recovery-pending-sync-v13");
+  localStorage.removeItem("recovery-sync-pending-v1");
+}catch{}
 
 loadData();
 
@@ -2860,27 +2840,14 @@ renderSleep();
 
 setInterval(renderSummary,60000);
 
-/* RESTORE PENDING HOME SCREEN SYNC */
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="visible"){
+    updateClock();
+    renderSummary();
+  }
+});
 
-if(hasPending()){
-  finishIntro();
-
-  showPendingControls(true);
-
-  syncStatus(
-    "Pending Apple Health sync. If your shortcut has "+
-    "finished, tap Finish Sync."
-  );
-
-  $("sleepCard").scrollIntoView({
-    behavior:"instant",
-    block:"start"
-  });
-
-}else{
-  clearPending();
-  startIntro();
-}
+startIntro();
 
 </script>
 
