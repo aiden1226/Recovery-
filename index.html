@@ -1,35 +1,51 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="gray">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sick. — Recovery Tracker</title>
+<title>Sick.</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;800&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
-
 :root{
+  color-scheme:dark;
   --bg:#2b2b2b;
   --card:#101010;
   --raise:#1d1d1d;
-  --line:#333;
+  --line:#2e2e2e;
   --text:#f0f0f0;
   --muted:#8f8f8f;
-  --accent:#8cdbad;
+  --accent:#d4d4d4;
+  --green:#78c99a;
+  --red:#ef7777;
 }
 
-body.light{
-  --bg:#eaeaea;
-  --card:#fff;
-  --raise:#f3f3f3;
-  --line:#ddd;
+[data-theme="charcoal"]{
+  --bg:#161616;
+  --card:#000;
+  --raise:#1a1a1a;
+  --line:#262626;
+}
+
+[data-theme="light"]{
+  color-scheme:light;
+  --bg:#cfcfcf;
+  --card:#f3f3f3;
+  --raise:#e3e3e3;
+  --line:#d2d2d2;
   --text:#111;
   --muted:#666;
-  --accent:#258454;
+  --accent:#222;
+  --green:#287b4b;
+  --red:#b94040;
 }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+
+html{scroll-behavior:smooth}
 
 body{
   margin:0;
@@ -39,17 +55,15 @@ body{
   transition:background .3s,color .3s;
 }
 
-main{
-  max-width:1100px;
-  margin:auto;
-  padding:28px 18px;
-}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
 
-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:28px;
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
 }
 
 h1,h2,h3{
@@ -58,321 +72,950 @@ h1,h2,h3{
 }
 
 h1{
-  font-size:48px;
+  font-size:clamp(48px,8vw,68px);
   font-weight:800;
-  letter-spacing:-3px;
+  letter-spacing:-4px;
+  line-height:1;
 }
 
-h2{font-size:21px}
+h2{
+  font-size:21px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
 h3{font-size:16px}
+p{margin:0;line-height:1.6}
 
-p{
-  color:var(--muted);
-  line-height:1.5;
+svg{
+  width:22px;
+  height:22px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  flex-shrink:0;
 }
 
-.grid{
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.green{color:var(--green)}
+.danger{color:var(--red)!important}
+
+/* ANIMATED INTRO */
+
+#intro{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#080808;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  transition:opacity .8s,visibility .8s;
+}
+
+#intro.finished{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.intro-glow{
+  position:absolute;
+  width:480px;
+  height:480px;
+  border-radius:50%;
+  background:radial-gradient(
+    circle,
+    rgba(100,180,145,.15),
+    transparent 70%
+  );
+  animation:glow 3s ease-in-out infinite;
+}
+
+.intro-content{
+  position:relative;
+  text-align:center;
+  width:min(340px,85vw);
+  animation:introEnter 1s ease both;
+}
+
+.intro-orb{
+  position:relative;
+  width:110px;
+  height:110px;
+  margin:0 auto 28px;
+  display:grid;
+  place-items:center;
+  background:#141414;
+  border:1px solid #333;
+  border-radius:32px;
+  box-shadow:0 0 60px rgba(120,201,154,.12);
+  animation:heartbeat 2s infinite;
+}
+
+.intro-orb svg{
+  width:60px;
+  height:60px;
+  color:#78c99a;
+}
+
+.intro-orb::after{
+  content:"";
+  position:absolute;
+  inset:-12px;
+  border:1px solid rgba(120,201,154,.3);
+  border-radius:40px;
+  animation:pulseRing 2s infinite;
+}
+
+.intro-title{
+  font-size:72px;
+  letter-spacing:-5px;
+  animation:titleEnter 1s .2s both;
+}
+
+.intro-subtitle{
+  color:#999;
+  font-size:15px;
+  margin-top:10px;
+  animation:titleEnter 1s .4s both;
+}
+
+.loading-track{
+  width:180px;
+  height:3px;
+  background:#222;
+  margin:35px auto 12px;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.loading-fill{
+  height:100%;
+  background:#78c99a;
+  border-radius:20px;
+  animation:loading 2.6s ease forwards;
+}
+
+.intro-status{
+  color:#777;
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.skip-intro{
+  position:absolute;
+  bottom:25px;
+  right:25px;
+  background:#161616;
+  border:1px solid #333;
+  color:#aaa;
+  padding:10px 17px;
+  border-radius:10px;
+}
+
+@keyframes loading{
+  from{width:0}
+  to{width:100%}
+}
+
+@keyframes introEnter{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+
+@keyframes titleEnter{
+  from{opacity:0;transform:translateY(15px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes heartbeat{
+  0%,100%{transform:scale(1)}
+  15%{transform:scale(1.08)}
+  30%{transform:scale(1)}
+  45%{transform:scale(1.05)}
+  60%{transform:scale(1)}
+}
+
+@keyframes pulseRing{
+  from{transform:scale(.95);opacity:.7}
+  to{transform:scale(1.4);opacity:0}
+}
+
+@keyframes glow{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.2)}
+}
+
+/* MAIN LAYOUT */
+
+main{
+  max-width:1100px;
+  margin:auto;
+  padding:22px 12px 40px;
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;
+  gap:12px;
 }
 
 .card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:22px;
+  position:relative;
   min-width:0;
+  background:var(--card);
+  border:1px solid transparent;
+  border-radius:18px;
+  padding:24px;
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+
+@media(hover:hover){
+  .card:hover{
+    transform:translateY(-3px);
+    border-color:var(--line);
+    box-shadow:0 12px 30px rgba(0,0,0,.12);
+  }
 }
 
 .full{grid-column:1/-1}
 
-button,input,textarea,select{
-  font:inherit;
+body.ready .card{
+  animation:cardEnter .6s both;
+  animation-delay:calc(var(--i,0)*65ms);
 }
 
-button{
-  border:0;
-  border-radius:12px;
-  padding:13px 18px;
-  font-weight:700;
-  cursor:pointer;
-  background:var(--text);
-  color:var(--card);
-  transition:transform .15s,opacity .15s;
+@keyframes cardEnter{
+  from{opacity:0;translate:0 18px}
+  to{opacity:1;translate:0 0}
 }
 
-button:hover{
-  transform:translateY(-2px);
-  opacity:.9;
-}
-
-button.secondary{
-  background:var(--raise);
-  color:var(--text);
-  border:1px solid var(--line);
-}
-
-button.danger{
-  color:#ed8888;
-  background:var(--raise);
-}
-
-input,textarea,select{
-  width:100%;
-  background:var(--raise);
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:13px;
-  margin:6px 0;
-  outline:none;
-}
-
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-.actions{
+.row{
   display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  margin-top:14px;
+  align-items:center;
+  gap:10px;
 }
+
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+
+.header{
+  padding:30px;
+  overflow:hidden;
+}
+
+.header::before{
+  content:"";
+  position:absolute;
+  right:-70px;
+  top:-100px;
+  width:300px;
+  height:300px;
+  background:radial-gradient(
+    circle,
+    rgba(120,201,154,.09),
+    transparent 70%
+  );
+  pointer-events:none;
+}
+
+.header-description{margin-top:12px}
+
+.live-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+  animation:statusPulse 2s infinite;
+}
+
+@keyframes statusPulse{
+  50%{opacity:.4}
+}
+
+.header-date{text-align:right}
+
+#clock{
+  font-family:Archivo,sans-serif;
+  font-size:26px;
+  font-weight:800;
+}
+
+.version{
+  color:var(--muted);
+  font-size:11px;
+  padding:5px 9px;
+  border:1px solid var(--line);
+  border-radius:20px;
+}
+
+/* BUTTONS */
+
+.primary,.secondary{
+  padding:12px 18px;
+  border-radius:12px;
+  font-weight:600;
+  transition:.2s;
+}
+
+.primary{
+  background:#f0f0f0;
+  color:#111;
+  border:none;
+}
+
+.primary:hover{
+  background:#d5d5d5;
+  transform:translateY(-2px);
+}
+
+[data-theme="light"] .primary{
+  background:#111;
+  color:white;
+}
+
+.secondary{
+  background:var(--raise);
+  color:var(--text);
+  border:1px solid var(--line);
+}
+
+.secondary:hover{
+  border-color:var(--muted);
+  transform:translateY(-2px);
+}
+
+button:active{transform:scale(.97)}
+.wide{width:100%}
+
+/* CURRENT STATUS */
+
+.status-display{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:24px;
+  margin-top:18px;
+  border-radius:15px;
+  background:var(--raise);
+  border:1px solid var(--line);
+}
+
+.status-orb{
+  position:relative;
+  width:65px;
+  height:65px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--line);
+  color:var(--muted);
+  transition:.4s;
+}
+
+.status-orb svg{
+  width:30px;
+  height:30px;
+}
+
+.status-orb.active::after{
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border:1px solid currentColor;
+  border-radius:50%;
+  animation:pulseRing 3s infinite;
+}
+
+#currentFeeling{
+  font-family:Archivo,sans-serif;
+  font-size:clamp(20px,4vw,30px);
+  font-weight:800;
+  margin:4px 0;
+}
+
+/* FEELING SELECTION */
 
 .feelings{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:9px;
-  margin-top:18px;
+  gap:8px;
+  margin:20px 0;
 }
 
 .feeling{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  width:100%;
+  padding:15px;
   background:var(--raise);
   color:var(--text);
   border:1px solid var(--line);
-  padding:18px 8px;
+  border-radius:13px;
+  text-align:left;
+  transition:.22s;
+}
+
+.feeling:hover{
+  transform:translateX(4px);
+  border-color:var(--level);
+}
+
+.feeling.selected{
+  border-color:var(--level);
+  box-shadow:inset 3px 0 var(--level);
+}
+
+.feeling-indicator{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--level);
+  box-shadow:0 0 12px var(--level);
+}
+
+.feeling-info{flex:1}
+.feeling-info strong{display:block;font-size:15px}
+.feeling-info small{color:var(--muted)}
+
+.radio{
+  width:19px;
+  height:19px;
+  border-radius:50%;
+  border:2px solid var(--line);
+}
+
+.feeling.selected .radio{
+  border:5px solid var(--level);
+}
+
+/* INPUTS */
+
+.field{
+  width:100%;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--raise);
+  color:var(--text);
+}
+
+.field::placeholder{color:var(--muted)}
+
+textarea.field{
+  resize:vertical;
+  min-height:100px;
+}
+
+.field-label{
+  display:block;
+  margin:16px 0 8px;
+  color:var(--muted);
   font-size:13px;
 }
 
-.feeling.active{
-  border-color:var(--accent);
-  color:var(--accent);
+.input-row{
+  display:flex;
+  gap:8px;
+  margin-top:15px;
 }
 
-.dot{
-  display:block;
-  width:15px;
-  height:15px;
-  border-radius:50%;
-  margin:0 auto 12px;
+.input-row .field{
+  flex:1;
+  min-width:0;
 }
 
-.tiles{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin-top:16px;
-}
-
-.tile{
-  background:var(--raise);
-  padding:16px;
-  border-radius:14px;
-}
-
-.tile small{
+.form-status{
+  min-height:18px;
+  font-size:13px;
   color:var(--muted);
-  display:block;
-  margin-bottom:8px;
-}
-
-.number{
-  font-size:29px;
-  font-weight:800;
+  margin-top:10px;
+  white-space:pre-wrap;
   overflow-wrap:anywhere;
 }
 
-.status{
-  display:inline-block;
-  border:1px solid var(--line);
-  padding:7px 11px;
-  border-radius:20px;
-  color:var(--muted);
-  font-size:12px;
+/* TRACKERS */
+
+.tracker-icon{
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  border-radius:13px;
+  background:var(--raise);
+  margin-bottom:15px;
+  transition:transform .3s;
 }
 
-.status.connected{
-  color:var(--accent);
+.card:hover .tracker-icon{
+  transform:rotate(-8deg) scale(1.08);
+}
+
+.big-value{
+  font-family:Archivo,sans-serif;
+  font-size:36px;
+  font-weight:800;
+  letter-spacing:-1px;
+  margin:20px 0 4px;
+}
+
+.tracker-sub{
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* SYMPTOMS */
+
+.symptoms{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:18px 0;
+}
+
+.symptom{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:12px;
+  background:var(--raise);
+  border:1px solid var(--line);
+  border-radius:11px;
+  cursor:pointer;
+  transition:.2s;
+  font-size:14px;
+}
+
+.symptom:hover{
+  border-color:var(--muted);
+  transform:translateY(-2px);
+}
+
+.symptom:has(input:checked){
   border-color:var(--accent);
 }
 
-.health-heading{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:14px;
+.symptom input{
+  accent-color:var(--accent);
+  width:16px;
+  height:16px;
+  flex-shrink:0;
 }
 
-.health-icon{
-  background:#fff;
-  color:#ff365e;
-  width:44px;
-  height:44px;
-  border-radius:12px;
+/* RECOVERY GRAPH */
+
+.chart-wrap{
+  position:relative;
+  margin-top:20px;
+  background:var(--raise);
+  border-radius:14px;
+  padding:14px;
+  overflow:hidden;
+}
+
+#recoveryChart{
+  display:block;
+  width:100%;
+  height:260px;
+}
+
+.chart-empty{
+  position:absolute;
+  inset:0;
   display:grid;
   place-items:center;
-  font-size:30px;
+  text-align:center;
+  color:var(--muted);
+  padding:20px;
+  font-size:14px;
+}
+
+/* APPLE HEALTH SLEEP TRACKER */
+
+.health-icon{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  box-shadow:0 4px 14px #0002;
+}
+
+.health-icon svg{
+  width:30px;
+  height:30px;
+  fill:#ff365e;
+  stroke:none;
+}
+
+.health-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:var(--muted);
+  background:var(--raise);
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:8px 12px;
+  font-size:12px;
+}
+
+.health-badge.connected{
+  color:var(--green);
+}
+
+.health-badge::before{
+  content:"";
+  width:7px;
+  height:7px;
+  background:currentColor;
+  border-radius:50%;
+}
+
+.sleep-summary{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:10px;
+  margin-top:22px;
+}
+
+.sleep-tile{
+  padding:20px;
+  background:var(--raise);
+  border:1px solid var(--line);
+  border-radius:14px;
+  min-width:0;
+}
+
+.sleep-tile svg{
+  color:var(--muted);
+  margin-bottom:12px;
+}
+
+.sleep-tile strong{
+  display:block;
+  font-family:Archivo,sans-serif;
+  font-size:clamp(20px,4vw,34px);
+  letter-spacing:-1px;
+  margin-top:8px;
+  overflow-wrap:anywhere;
+}
+
+.sleep-chart{
+  background:var(--raise);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:20px;
+  margin-top:14px;
 }
 
 .sleep-bar{
   display:flex;
-  height:15px;
+  height:22px;
   overflow:hidden;
-  border-radius:8px;
+  border-radius:7px;
+  margin:20px 0;
+}
+
+.sleep-bar div{
+  transition:width .4s;
+}
+
+.sleep-stage-list{
+  display:grid;
+  gap:10px;
+}
+
+.sleep-stage{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.stage-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+.stage-track{
+  height:6px;
+  border-radius:6px;
+  background:var(--line);
+  flex:1;
+  overflow:hidden;
+}
+
+.stage-fill{
+  height:100%;
+  border-radius:6px;
+}
+
+.stage-name{
+  min-width:55px;
+  font-size:13px;
+}
+
+.stage-duration{
+  min-width:75px;
+  text-align:right;
+  font-size:13px;
+}
+
+.health-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
   margin-top:20px;
 }
 
-.legend{
-  display:flex;
-  flex-wrap:wrap;
-  gap:14px;
-  font-size:12px;
-  margin-top:12px;
+.sleep-history{
+  display:grid;
+  gap:8px;
+  max-height:300px;
+  overflow-y:auto;
+  margin-top:14px;
 }
 
-.legend span{
+.sleep-history-item{
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  gap:6px;
+  gap:12px;
+  background:var(--raise);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px;
 }
 
-.legend i{
-  width:9px;
-  height:9px;
-  border-radius:50%;
+.sleep-history-item strong{
+  font-family:Archivo,sans-serif;
+}
+
+/* HISTORY */
+
+.history-list{
+  display:grid;
+  gap:8px;
+  margin-top:18px;
+  max-height:420px;
+  overflow-y:auto;
 }
 
 .history-item{
   background:var(--raise);
+  border:1px solid var(--line);
   border-radius:12px;
-  padding:14px;
-  margin-top:9px;
-  overflow-wrap:anywhere;
+  padding:15px;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
 }
 
-.history-item small{
+.history-item:hover{border-color:var(--muted)}
+
+.history-icon{
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:var(--card);
+  color:var(--muted);
+  flex-shrink:0;
+}
+
+.history-info{
+  flex:1;
+  min-width:0;
+}
+
+.history-info strong,
+.history-info p{
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+
+.history-info small{
   color:var(--muted);
   display:block;
   margin-top:5px;
 }
 
-.symptoms{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:15px;
+.delete-btn{
+  background:transparent;
+  color:var(--muted);
+  border:none;
+  padding:7px;
+  border-radius:8px;
 }
 
-.symptoms button.selected{
-  border-color:var(--accent);
-  color:var(--accent);
-}
-
-canvas{
-  width:100%;
-  height:180px;
-  margin-top:16px;
-}
-
-dialog{
+.delete-btn:hover{
   background:var(--card);
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:20px;
-  width:min(480px,92vw);
-  max-height:90vh;
-  overflow:auto;
-  padding:24px;
+  color:var(--red);
 }
 
-dialog::backdrop{
-  background:#000a;
-  backdrop-filter:blur(5px);
-}
-
-#intro{
-  position:fixed;
-  inset:0;
-  z-index:999;
-  background:#101010;
-  color:white;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  transition:opacity .5s;
-}
-
-#intro.hidden{
-  opacity:0;
-  pointer-events:none;
-}
-
-#intro[hidden]{
-  display:none;
-}
-
-.orb{
-  width:75px;
-  height:75px;
-  border-radius:50%;
-  background:#8cdbad;
-  box-shadow:0 0 45px #8cdbad66;
-  animation:pulse 1.5s infinite;
-  margin-bottom:25px;
-}
-
-@keyframes pulse{
-  0%,100%{transform:scale(.85)}
-  50%{transform:scale(1.15)}
-}
-
-footer{
+.empty{
   text-align:center;
   color:var(--muted);
   padding:30px 10px;
-  font-size:13px;
 }
 
-.notice{
-  font-size:13px;
+/* GUIDANCE */
+
+.guidance{
+  border-left:3px solid var(--accent);
+  padding:14px 16px;
+  border-radius:0 12px 12px 0;
+  background:var(--raise);
+  margin-top:12px;
+}
+
+.guidance p{
+  font-size:14px;
+  margin-top:5px;
+}
+
+.guidance.urgent{border-left-color:var(--red)}
+.guidance.urgent strong{color:var(--red)}
+
+/* THEMES */
+
+.theme-btn{
+  background:var(--raise);
   color:var(--muted);
-  line-height:1.6;
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:9px 17px;
+  transition:.2s;
 }
 
-.success{color:var(--accent)}
-.error{color:#ed8888}
+.theme-btn:hover{transform:translateY(-2px)}
 
-#importStatus{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
+.theme-btn.active{
+  background:var(--accent);
+  color:var(--card);
 }
 
-@media(max-width:650px){
-  .grid{grid-template-columns:1fr}
-  .feelings{grid-template-columns:repeat(2,1fr)}
-  .tiles{grid-template-columns:1fr 1fr}
-  .card{padding:17px}
-  h1{font-size:40px}
-  .number{font-size:24px}
+/* DIALOGS */
+
+dialog{
+  width:min(480px,92vw);
+  max-height:85vh;
+  overflow:auto;
+  background:var(--card);
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 20px 70px #0005;
+}
+
+dialog::backdrop{
+  background:#0009;
+  backdrop-filter:blur(7px);
+}
+
+.dialog-step{
+  display:flex;
+  gap:13px;
+  align-items:flex-start;
+  background:var(--raise);
+  border-radius:13px;
+  padding:15px;
+  margin-top:12px;
+}
+
+.step-number{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:9px;
+  background:var(--line);
+  font-weight:700;
+  flex-shrink:0;
+}
+
+/* TOAST */
+
+#toast{
+  position:fixed;
+  bottom:22px;
+  left:50%;
+  transform:translate(-50%,30px);
+  opacity:0;
+  pointer-events:none;
+  background:var(--card);
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px 22px;
+  box-shadow:0 8px 35px #0005;
+  z-index:100;
+  transition:.3s;
+  max-width:90vw;
+  text-align:center;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+footer{
+  padding:0 20px 30px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+
+@media(max-width:700px){
+  main{
+    grid-template-columns:1fr;
+    padding-top:12px;
+  }
+
+  .card{padding:18px}
+  .header{padding:24px}
+  .header-date{text-align:left}
+  .status-display{padding:16px;gap:14px}
+  #recoveryChart{height:220px}
+
+  .sleep-summary{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .sleep-tile:first-child{
+    grid-column:1/-1;
+  }
+
+  .sleep-tile{padding:16px}
+  .sleep-chart{padding:15px}
+
+  .health-actions button{
+    flex:1 1 130px;
+  }
+}
+
+@media(max-width:350px){
+  .symptoms{grid-template-columns:1fr}
 }
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{
     animation:none!important;
     transition:none!important;
+    scroll-behavior:auto!important;
   }
 }
 </style>
@@ -380,381 +1023,907 @@ footer{
 
 <body>
 
-<div id="intro">
-  <div class="orb"></div>
-  <h1>Sick.</h1>
-  <p>One day at a time.</p>
-  <button class="secondary" onclick="finishIntro()">Skip</button>
+<!-- INTRO -->
+
+<div id="intro" role="dialog" aria-label="Welcome to Sick">
+
+  <div class="intro-glow"></div>
+
+  <div class="intro-content">
+
+    <div class="intro-orb">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 12h4l3-7 4 14 3-7h4"/>
+      </svg>
+    </div>
+
+    <h1 class="intro-title">Sick.</h1>
+
+    <p class="intro-subtitle">
+      Rest. Recover. Take care.
+    </p>
+
+    <div class="loading-track">
+      <div class="loading-fill"></div>
+    </div>
+
+    <div class="intro-status">
+      Preparing your dashboard
+    </div>
+
+  </div>
+
+  <button class="skip-intro" id="skipIntro">
+    Skip intro
+  </button>
+
 </div>
 
-<main>
+<main id="app" inert>
 
-<header>
-  <div>
-    <h1>Sick.</h1>
-    <p id="date"></p>
-  </div>
-  <button class="secondary" id="theme">Change theme</button>
-</header>
+<!-- HEADER -->
 
-<div class="grid">
+<section class="card full header">
 
-<section class="card full">
-  <h2>How are you feeling?</h2>
-  <p>Record how you're feeling today.</p>
-  <div class="feelings" id="feelings"></div>
-  <p id="feelingStatus"></p>
-</section>
+  <div class="row between wrap">
 
-<section class="card full">
-  <h2>Recovery overview</h2>
-  <p>Your recent check-ins.</p>
-  <canvas id="chart"></canvas>
-</section>
-
-<section class="card full">
-
-  <div class="health-heading">
-    <div class="health-icon">♥</div>
     <div>
-      <h2>Sleep tracker</h2>
-      <p style="margin:5px 0">Apple Health integration</p>
+      <div class="row">
+        <h1>Sick.</h1>
+        <span class="version">V1.2</span>
+      </div>
+
+      <p class="muted header-description">
+        Track your illness. Monitor your recovery.
+      </p>
     </div>
+
+    <div class="header-date">
+      <div id="clock">--:--</div>
+      <p class="muted small" id="date"></p>
+    </div>
+
   </div>
 
-  <span class="status" id="healthStatus">Not imported</span>
-
-  <div class="tiles">
-    <div class="tile">
-      <small>Recorded sleep</small>
-      <div class="number" id="sleepDuration">--</div>
-    </div>
-
-    <div class="tile">
-      <small>First sleep record</small>
-      <div class="number" id="bedtime">--</div>
-    </div>
-
-    <div class="tile">
-      <small>Last sleep record</small>
-      <div class="number" id="wakeTime">--</div>
-    </div>
+  <div class="row" style="margin-top:24px">
+    <span class="live-dot"></span>
+    <span class="muted small" id="storageStatus">
+      Local recovery dashboard
+    </span>
   </div>
 
-  <p id="sleepDate"></p>
+</section>
 
-  <div id="stagesSection" hidden>
-    <h3>Sleep stages</h3>
+<!-- CURRENT STATUS -->
+
+<section class="card full">
+
+  <h2>Your current status</h2>
+
+  <p class="muted small">
+    Based on your most recent personal check-in.
+  </p>
+
+  <div class="status-display">
+
+    <div class="status-orb" id="statusOrb">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 12h4l3-7 4 14 3-7h4"/>
+      </svg>
+    </div>
+
+    <div>
+      <p class="muted small">Last recorded feeling</p>
+      <div id="currentFeeling">Not recorded</div>
+      <p class="muted small" id="lastCheckin">
+        Complete a check-in to get started.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CHECK-IN -->
+
+<section class="card">
+
+  <h2>How are you feeling?</h2>
+
+  <p class="muted small">
+    Select how sick you feel right now.
+  </p>
+
+  <div class="feelings" id="feelings"></div>
+
+  <button class="primary wide" id="saveFeeling">
+    Save check-in
+  </button>
+
+  <p class="form-status" id="feelingStatus"></p>
+
+</section>
+
+<!-- SYMPTOMS -->
+
+<section class="card">
+
+  <h2>Symptoms</h2>
+
+  <p class="muted small">
+    Select the symptoms you're currently experiencing.
+  </p>
+
+  <div class="symptoms" id="symptoms"></div>
+
+  <label class="field-label" for="otherSymptoms">
+    Other symptoms
+  </label>
+
+  <input class="field" id="otherSymptoms"
+    maxlength="200"
+    placeholder="Anything else?">
+
+  <button class="primary wide" id="saveSymptoms"
+    style="margin-top:15px">
+    Save symptoms
+  </button>
+
+  <p class="form-status" id="symptomStatus"></p>
+
+</section>
+
+<!-- RECOVERY GRAPH -->
+
+<section class="card full">
+
+  <div class="row between wrap">
+
+    <div>
+      <h2>Recovery history</h2>
+      <p class="muted small">
+        Your last 14 recorded check-ins.
+      </p>
+    </div>
+
+    <span class="muted small" id="checkinCount">
+      0 check-ins
+    </span>
+
+  </div>
+
+  <div class="chart-wrap">
+
+    <canvas id="recoveryChart"
+      role="img"
+      aria-label="Graph of self-reported sickness levels">
+    </canvas>
+
+    <div class="chart-empty" id="chartEmpty">
+      Save a check-in to begin your recovery graph.
+    </div>
+
+  </div>
+
+  <p class="muted small" style="margin-top:12px">
+    This graph shows how you reported feeling,
+    not a medical assessment or recovery prediction.
+  </p>
+
+</section>
+
+<!-- APPLE HEALTH -->
+
+<section class="card full">
+
+  <div class="row between wrap">
+
+    <div class="row">
+
+      <div class="health-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 21S2 15 2 8.5C2 3 8.5 1.5 12 7c3.5-5.5 10-4 10 1.5C22 15 12 21 12 21Z"/>
+        </svg>
+      </div>
+
+      <div>
+        <h2 style="margin-bottom:3px">
+          Sleep tracker
+        </h2>
+        <p class="muted small">
+          Powered by Apple Health imports
+        </p>
+      </div>
+
+    </div>
+
+    <span class="health-badge" id="healthStatus">
+      Not imported
+    </span>
+
+  </div>
+
+  <div class="sleep-summary">
+
+    <div class="sleep-tile">
+
+      <svg viewBox="0 0 24 24">
+        <path d="M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11Z"/>
+      </svg>
+
+      <p class="muted small">Recorded sleep</p>
+
+      <strong id="sleepDuration">—</strong>
+
+      <p class="muted small" id="sleepDate"
+        style="margin-top:5px">
+        No sleep imported
+      </p>
+
+    </div>
+
+    <div class="sleep-tile">
+
+      <svg viewBox="0 0 24 24">
+        <path d="M3 18v-7M21 18v-7M3 15h18M5 11V6h14v5"/>
+        <path d="M3 11h18v4"/>
+      </svg>
+
+      <p class="muted small">First sleep record</p>
+
+      <strong id="bedtime">—</strong>
+
+    </div>
+
+    <div class="sleep-tile">
+
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>
+      </svg>
+
+      <p class="muted small">Last sleep record</p>
+
+      <strong id="wakeTime">—</strong>
+
+    </div>
+
+  </div>
+
+  <div class="sleep-chart" id="stagesSection" hidden>
+
+    <div class="row between wrap">
+      <h3>Sleep stages</h3>
+      <span class="muted small">Latest session</span>
+    </div>
+
     <div class="sleep-bar" id="sleepStages"></div>
-    <div class="legend" id="sleepLegend"></div>
-    <p class="notice">
-      Estimated from imported sleep records.
+
+    <div class="sleep-stage-list" id="sleepLegend"></div>
+
+    <p class="muted small" style="margin-top:16px">
+      Estimated stage distribution, not a chronological
+      sleep timeline or medical assessment.
     </p>
+
   </div>
 
-  <div class="actions">
-    <button onclick="document.getElementById('connectDialog').showModal()">
+  <div class="health-actions">
+
+    <button class="primary" id="connectHealth">
       Connect Apple Health
     </button>
 
-    <button class="secondary" onclick="runShortcut()">
+    <button class="secondary" id="syncHealth">
       Sync Apple Health
     </button>
 
-    <button class="secondary" onclick="openImport()">
+    <button class="secondary" id="importHealth">
       Import sleep data
     </button>
+
   </div>
 
-  <p id="lastSync" class="notice">
+  <p class="muted small" id="lastSync"
+    style="margin-top:14px">
     No sleep data imported yet.
   </p>
 
-  <p id="recordCount" class="notice"></p>
+  <p class="muted small" id="recordCount"></p>
 
-  <div id="sleepHistory"></div>
+  <div id="sleepHistorySection" hidden>
 
-  <div class="actions">
-    <button class="danger" onclick="clearSleep()">
-      Disconnect & clear imported sleep
-    </button>
+    <div class="row between wrap"
+      style="margin-top:24px">
+
+      <h3>Sleep history</h3>
+
+      <span class="muted small">
+        Saved on this device
+      </span>
+
+    </div>
+
+    <div class="sleep-history" id="sleepHistory"></div>
+
   </div>
+
+  <button class="secondary danger" id="disconnectHealth"
+    style="margin-top:18px">
+    Disconnect &amp; clear imported sleep
+  </button>
 
 </section>
 
-<section class="card">
-  <h2>Symptoms</h2>
-  <p>Select your current symptoms.</p>
-  <div class="symptoms" id="symptoms"></div>
-  <div class="actions">
-    <button onclick="saveSymptoms()">Save symptoms</button>
-  </div>
-</section>
+<!-- TEMPERATURE -->
 
 <section class="card">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24">
+      <path d="M9 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Z"/>
+      <path d="M12 10v7"/>
+      <circle cx="12" cy="18" r="1"/>
+    </svg>
+  </div>
+
   <h2>Temperature</h2>
-  <p>Record a thermometer reading.</p>
 
-  <input id="temperature" type="number"
-    step="0.1" placeholder="Temperature">
+  <p class="muted small">
+    Record a thermometer reading.
+  </p>
 
-  <select id="tempUnit">
-    <option value="F">Fahrenheit (°F)</option>
-    <option value="C">Celsius (°C)</option>
-  </select>
+  <div class="big-value" id="temperatureValue">—</div>
 
-  <button onclick="saveTemperature()">Save reading</button>
-  <p id="latestTemp">No readings yet.</p>
+  <p class="tracker-sub" id="temperatureTime">
+    No readings recorded
+  </p>
+
+  <div class="input-row">
+
+    <input class="field" id="temperatureInput"
+      type="number" step="0.1"
+      aria-label="Temperature"
+      placeholder="Temperature">
+
+    <select class="field" id="temperatureUnit"
+      aria-label="Temperature unit"
+      style="max-width:85px">
+
+      <option value="F">°F</option>
+      <option value="C">°C</option>
+
+    </select>
+
+  </div>
+
+  <button class="primary wide" id="saveTemperature"
+    style="margin-top:10px">
+    Log temperature
+  </button>
+
+  <p class="form-status" id="temperatureStatus"></p>
+
 </section>
 
+<!-- HYDRATION -->
+
 <section class="card">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/>
+    </svg>
+  </div>
+
   <h2>Hydration</h2>
-  <p>Keep track of the water you drink.</p>
 
-  <div class="number" id="waterTotal">0 mL</div>
+  <p class="muted small">
+    Keep a record of drinks you've had.
+  </p>
 
-  <div class="actions">
-    <button onclick="addWater(250)">+250 mL</button>
-    <button class="secondary" onclick="addWater(500)">
-      +500 mL
+  <div class="big-value" id="waterValue">0 cups</div>
+
+  <p class="tracker-sub">Recorded today</p>
+
+  <div class="row wrap" style="margin-top:20px">
+
+    <button class="secondary" data-water=".5">
+      + ½ cup
     </button>
+
+    <button class="secondary" data-water="1">
+      + 1 cup
+    </button>
+
+    <button class="secondary" data-water="2">
+      + 2 cups
+    </button>
+
   </div>
+
+  <p class="muted small" style="margin-top:18px">
+    This is a record, not a prescribed hydration target.
+  </p>
+
 </section>
 
+<!-- REST -->
+
 <section class="card">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24">
+      <path d="M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11Z"/>
+    </svg>
+  </div>
+
   <h2>Rest tracker</h2>
-  <p>Log time spent resting.</p>
 
-  <div class="number" id="restTotal">0 min</div>
+  <p class="muted small">
+    Manually record completed rest periods.
+  </p>
 
-  <div class="actions">
-    <button onclick="addRest(15)">+15 min</button>
-    <button class="secondary" onclick="addRest(30)">
-      +30 min
+  <div class="big-value" id="restValue">0 hrs</div>
+
+  <p class="tracker-sub">Rest logged today</p>
+
+  <div class="input-row">
+
+    <input class="field" id="restInput"
+      type="number" min=".25" max="24" step=".25"
+      aria-label="Hours of rest"
+      placeholder="Hours">
+
+    <button class="primary" id="saveRest">
+      Log rest
     </button>
+
   </div>
+
+  <p class="form-status" id="restStatus"></p>
+
+  <p class="muted small">
+    Apple Health sleep imports are displayed separately.
+  </p>
+
 </section>
 
+<!-- MEDICATION -->
+
 <section class="card">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24">
+      <path d="M8 3h8M9 3v5l-4 5v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6l-4-5V3"/>
+      <path d="M9 15h6M12 12v6"/>
+    </svg>
+  </div>
+
   <h2>Medication log</h2>
-  <p>Record medication you've already taken.</p>
 
-  <input id="medicine" placeholder="Medication name">
-  <textarea id="medicineNotes"
-    placeholder="Optional notes"></textarea>
-
-  <button onclick="saveMedicine()">Save record</button>
-
-  <p class="notice">
-    This is a record only, not a medication schedule
-    or dosing guide. Follow instructions from your
-    healthcare professional or trusted adult.
+  <p class="muted small">
+    Record medication already taken according to
+    a parent, pharmacist or doctor's instructions.
   </p>
+
+  <label class="field-label" for="medicineName">
+    Medication name
+  </label>
+
+  <input class="field" id="medicineName"
+    maxlength="100" placeholder="Name">
+
+  <label class="field-label" for="medicineNotes">
+    Optional notes
+  </label>
+
+  <input class="field" id="medicineNotes"
+    maxlength="200" placeholder="Notes">
+
+  <button class="primary wide" id="saveMedicine"
+    style="margin-top:15px">
+    Record medication
+  </button>
+
+  <p class="form-status" id="medicineStatus"></p>
+
+  <p class="muted small">
+    This app does not recommend medicines, doses
+    or when to take another dose.
+  </p>
+
 </section>
 
-<section class="card">
+<!-- JOURNAL -->
+
+<section class="card full">
+
   <h2>Recovery journal</h2>
-  <p>Write down how your day is going.</p>
 
-  <textarea id="journal"
-    placeholder="Write something..."></textarea>
+  <p class="muted small">
+    Write down anything you want to remember
+    about how you've been feeling.
+  </p>
 
-  <button onclick="saveJournal()">Save entry</button>
+  <textarea class="field" id="journalInput"
+    maxlength="3000"
+    style="margin-top:18px"
+    placeholder="How has today been? What's getting better or worse?"></textarea>
+
+  <button class="primary" id="saveJournal"
+    style="margin-top:10px">
+    Save journal entry
+  </button>
+
+  <p class="form-status" id="journalStatus"></p>
+
 </section>
 
-<section class="card full">
-  <h2>Recovery history</h2>
-  <div id="history"></div>
+<!-- ACTIVITY HISTORY -->
 
-  <div class="actions">
-    <button class="danger" onclick="clearHistory()">
-      Clear recovery history
-    </button>
+<section class="card full">
+
+  <div class="row between wrap">
+
+    <div>
+      <h2>Activity history</h2>
+      <p class="muted small">
+        All your recorded recovery activity.
+      </p>
+    </div>
+
+    <select class="field" id="historyFilter"
+      aria-label="Filter activity"
+      style="width:auto">
+
+      <option value="all">All activity</option>
+      <option value="feeling">Check-ins</option>
+      <option value="symptoms">Symptoms</option>
+      <option value="temperature">Temperature</option>
+      <option value="water">Hydration</option>
+      <option value="rest">Rest</option>
+      <option value="medicine">Medication</option>
+      <option value="journal">Journal</option>
+
+    </select>
+
   </div>
+
+  <div class="history-list" id="historyList"></div>
+
 </section>
+
+<!-- HEALTH GUIDANCE -->
 
 <section class="card full">
-  <h2>Privacy & safety</h2>
 
-  <p class="notice">
-    Your records are stored locally in this browser
-    without encryption. Avoid storing private health
-    information on shared devices. Clearing browser
-    storage may remove your records.
+  <h2>Taking care of yourself</h2>
+
+  <p class="muted small">
+    General information for when you're feeling sick.
   </p>
 
-  <p class="notice">
-    Apple Health access is read-only through your
-    installed shortcut. This website does not upload
-    your sleep records to a server. Clearing imported
-    sleep does not delete records from Apple Health
-    or revoke the shortcut's Health permissions.
+  <div class="guidance">
+
+    <strong>Rest and stay comfortable</strong>
+
+    <p class="muted">
+      Get enough rest, drink fluids regularly,
+      and let a parent or trusted adult know
+      when you're feeling unwell.
+    </p>
+
+  </div>
+
+  <div class="guidance">
+
+    <strong>When to get medical advice</strong>
+
+    <p class="muted">
+      Tell a trusted adult and contact a healthcare
+      professional if symptoms are worsening,
+      aren't improving, or you're concerned about
+      a fever, pain or dehydration.
+    </p>
+
+  </div>
+
+  <div class="guidance urgent">
+
+    <strong>Emergency symptoms</strong>
+
+    <p>
+      Get emergency help for serious breathing
+      difficulties, severe chest pain, confusion,
+      fainting, or difficulty waking up.
+      Call 911 in the United States.
+    </p>
+
+  </div>
+
+  <p class="muted small" style="margin-top:15px">
+    Your sickness rating does not determine whether
+    you need medical attention. This app is a personal
+    tracker, not a diagnostic or emergency service.
   </p>
 
-  <p class="notice">
-    This website does not diagnose illnesses or replace
-    medical care. If you're feeling seriously unwell,
-    tell a trusted adult or seek medical help.
-    For emergencies, call 911 in the United States.
-  </p>
 </section>
 
-</div>
+<!-- APPEARANCE -->
 
-<footer>© 2026 Aiden · Sick.</footer>
+<section class="card full">
+
+  <div class="row between wrap">
+
+    <div>
+      <h2>Appearance</h2>
+      <p class="muted small">
+        Choose your preferred theme.
+      </p>
+    </div>
+
+    <div class="row wrap">
+
+      <button class="theme-btn" data-theme="gray">
+        Gray
+      </button>
+
+      <button class="theme-btn" data-theme="charcoal">
+        Charcoal
+      </button>
+
+      <button class="theme-btn" data-theme="light">
+        Light
+      </button>
+
+    </div>
+
+  </div>
+
+  <button class="secondary" id="replayIntro"
+    style="margin-top:18px">
+    Replay intro
+  </button>
+
+</section>
+
+<!-- PRIVACY -->
+
+<section class="card full">
+
+  <h2>Data &amp; privacy</h2>
+
+  <p class="muted small">
+    Your entries and imported sleep records are stored
+    locally in this browser without encryption.
+    Avoid entering sensitive information on shared
+    devices. Clearing browser data may erase your records.
+  </p>
+
+  <p class="muted small" style="margin-top:12px">
+    Apple Health integration uses read-only sleep exports
+    through Apple Shortcuts. This website does not upload
+    your recovery or sleep records to a server.
+  </p>
+
+  <p class="muted small" style="margin-top:12px">
+    Clearing imported sleep does not delete anything
+    from Apple Health or revoke shortcut permissions.
+    Review the shortcut's actions before granting access.
+  </p>
+
+  <button class="secondary danger" id="clearData"
+    style="margin-top:18px">
+    Clear all recovery data
+  </button>
+
+</section>
 
 </main>
 
+<!-- CONNECT APPLE HEALTH DIALOG -->
+
 <dialog id="connectDialog">
 
-  <h2>Connect Apple Health</h2>
+  <div class="row">
 
-  <p>
-    Install Sick Sleep Sync to export your sleep
-    records using Apple Shortcuts.
-  </p>
+    <div class="health-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 21S2 15 2 8.5C2 3 8.5 1.5 12 7c3.5-5.5 10-4 10 1.5C22 15 12 21 12 21Z"/>
+      </svg>
+    </div>
 
-  <p><strong>1.</strong> Install the shortcut.</p>
+    <div>
+      <h2>Apple Health</h2>
+      <p class="muted small">Connect your sleep data</p>
+    </div>
 
-  <button onclick="installShortcut()">
-    Install Shortcut
-  </button>
+  </div>
 
-  <p>
-    <strong>2.</strong> Make sure its name is exactly
-    <strong>Sick Sleep Sync</strong>.
-  </p>
+  <div class="dialog-step">
 
-  <p>
-    <strong>3.</strong> Run the shortcut and grant
-    read-only Sleep permission when requested.
-  </p>
+    <div class="step-number">1</div>
 
-  <button onclick="runShortcut()">
-    Run Sick Sleep Sync
-  </button>
+    <div>
+      <strong>Install Sick Sleep Sync</strong>
 
-  <p>
-    <strong>4.</strong> Return here and import
-    the copied sleep data.
-  </p>
+      <p class="muted small">
+        Add the shortcut to your iPhone.
+        Review its actions before granting permission.
+      </p>
 
-  <div class="actions">
+      <button class="primary" id="installShortcut"
+        style="margin-top:12px">
+        Install Shortcut
+      </button>
+    </div>
 
-    <button onclick="document.getElementById('connectDialog').close();openImport()">
+  </div>
+
+  <div class="dialog-step">
+
+    <div class="step-number">2</div>
+
+    <div>
+      <strong>Check the shortcut name</strong>
+
+      <p class="muted small">
+        Make sure the installed shortcut is named
+        exactly Sick Sleep Sync.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="dialog-step">
+
+    <div class="step-number">3</div>
+
+    <div>
+      <strong>Sync your sleep records</strong>
+
+      <p class="muted small">
+        Run the shortcut and allow read access
+        to Sleep when requested.
+      </p>
+
+      <button class="secondary" id="runShortcut"
+        style="margin-top:12px">
+        Run Sick Sleep Sync
+      </button>
+    </div>
+
+  </div>
+
+  <div class="dialog-step">
+
+    <div class="step-number">4</div>
+
+    <div>
+      <strong>Import your sleep</strong>
+
+      <p class="muted small">
+        Return to Sick. and paste the copied
+        sleep records.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="row wrap" style="margin-top:20px">
+
+    <button class="primary" id="connectImport">
       Import sleep data
     </button>
 
-    <button class="secondary"
-      onclick="document.getElementById('connectDialog').close()">
+    <button class="secondary" id="closeConnect">
       Close
     </button>
 
   </div>
 
 </dialog>
+
+<!-- IMPORT DIALOG -->
 
 <dialog id="importDialog">
 
-  <h2>Import Apple Health data</h2>
+  <h2>Import sleep data</h2>
 
-  <p>
-    Paste the sleep records copied by Sick Sleep Sync.
+  <p class="muted small">
+    Paste the output from Sick Sleep Sync.
     JSON is not required.
   </p>
 
-  <textarea id="sleepInput"
-    style="min-height:180px"
-    placeholder="Paste your Apple Health sleep records here..."></textarea>
+  <textarea class="field" id="sleepInput"
+    style="min-height:180px;margin-top:18px"
+    placeholder="Paste your sleep records here..."
+    aria-label="Apple Health sleep records"></textarea>
 
-  <div class="actions">
+  <div class="row wrap" style="margin-top:12px">
 
-    <button class="secondary" onclick="pasteClipboard()">
+    <button class="secondary" id="pasteClipboard">
       Paste from clipboard
     </button>
 
-    <button onclick="importSleep()">
+    <button class="primary" id="confirmImport">
       Import
     </button>
 
-    <button class="secondary"
-      onclick="document.getElementById('importDialog').close()">
+    <button class="secondary" id="closeImport">
       Close
     </button>
 
   </div>
 
-  <p id="importStatus" role="status"></p>
+  <p class="form-status" id="importStatus"
+    role="status"></p>
 
 </dialog>
 
+<div id="toast" role="status" aria-live="polite"></div>
+
+<footer>
+  &copy; 2026 Aiden · Sick.
+  <p style="margin-top:5px">
+    Rest. Recover. Take care.
+  </p>
+  <p style="margin-top:8px">
+    Version 1.2
+  </p>
+</footer>
+
 <script>
 "use strict";
+
+const $ = id => document.getElementById(id);
+
+const STORAGE_KEY = "sick-recovery-data-v1";
+const THEME_KEY = "sick-theme-v1";
+const HEALTH_KEY = "sick-apple-health-v1";
 
 const SHORTCUT_URL =
   "https://www.icloud.com/shortcuts/e6f8de2f84e64ef79f5e9829ec404930";
 
 const SHORTCUT_NAME = "Sick Sleep Sync";
 
-const DATA_KEY = "sick-recovery-data-v1";
-const HEALTH_KEY = "sick-apple-health-v1";
-const THEME_KEY = "sick-theme-v1";
-
-const $ = id => document.getElementById(id);
-
-function read(key,fallback){
-  try{
-    return JSON.parse(localStorage.getItem(key)) ?? fallback;
-  }catch{
-    return fallback;
+const levels = [
+  {
+    name:"Very sick",
+    color:"#ef7777",
+    description:"Feeling very unwell"
+  },
+  {
+    name:"Mostly sick",
+    color:"#ed9560",
+    description:"Still feeling quite unwell"
+  },
+  {
+    name:"Sick",
+    color:"#e5c35c",
+    description:"Currently feeling sick"
+  },
+  {
+    name:"Less sick",
+    color:"#b5ce78",
+    description:"Starting to feel better"
+  },
+  {
+    name:"Mostly not sick",
+    color:"#78c99a",
+    description:"Feeling close to normal"
   }
-}
-
-function store(key,value){
-  try{
-    localStorage.setItem(key,JSON.stringify(value));
-    return true;
-  }catch{
-    alert("Browser storage is unavailable. Changes may not be saved.");
-    return false;
-  }
-}
-
-let entries = read(DATA_KEY,[]);
-
-if(!Array.isArray(entries)){
-  entries=[];
-}
-
-let health = read(HEALTH_KEY,{
-  records:[],
-  lastSync:null
-});
-
-if(!health || !Array.isArray(health.records)){
-  health={
-    records:[],
-    lastSync:null
-  };
-}
-
-const levels=[
-  "Very sick",
-  "Mostly sick",
-  "Sick",
-  "Less sick",
-  "Mostly not sick"
 ];
 
-const colors=[
-  "#e46c6c",
-  "#e9a36c",
-  "#e6cc70",
-  "#9fc77c",
-  "#75d49c"
+const symptomOptions = [
+  "Headache","Sore throat","Runny nose",
+  "Stuffy nose","Cough","Fever",
+  "Chills","Fatigue","Body aches",
+  "Nausea","Stomachache","Dizziness"
 ];
 
-const stageColors={
+const stageColors = {
   Awake:"#ed9560",
   REM:"#77cbe8",
   Core:"#537bdc",
@@ -762,289 +1931,636 @@ const stageColors={
   Asleep:"#8f8f8f"
 };
 
-function finishIntro(){
-  $("intro").classList.add("hidden");
+let entries = [];
+let selectedFeeling = null;
+let storageAvailable = true;
+let introTimer;
+let toastTimer;
 
-  setTimeout(()=>{
-    $("intro").hidden=true;
-  },550);
-}
-
-setTimeout(finishIntro,2800);
-
-$("date").textContent=
-  new Date().toLocaleDateString(undefined,{
-    weekday:"long",
-    month:"long",
-    day:"numeric",
-    year:"numeric"
-  });
-
-function applyTheme(){
-  document.body.classList.toggle(
-    "light",
-    read(THEME_KEY,"dark")==="light"
-  );
-}
-
-$("theme").onclick=()=>{
-  const next=document.body.classList.contains("light")
-    ?"dark":"light";
-
-  store(THEME_KEY,next);
-  applyTheme();
-  drawChart();
+let health = {
+  records:[],
+  lastSync:null
 };
 
-applyTheme();
+/* HELPERS */
+
+function make(tag,className,text){
+  const element = document.createElement(tag);
+
+  if(className) element.className = className;
+  if(text !== undefined) element.textContent = text;
+
+  return element;
+}
+
+function formatTime(value){
+  return new Date(value).toLocaleString([],{
+    month:"short",
+    day:"numeric",
+    year:"numeric",
+    hour:"numeric",
+    minute:"2-digit"
+  });
+}
+
+function clockTime(value){
+  return new Date(value).toLocaleTimeString([],{
+    hour:"numeric",
+    minute:"2-digit"
+  });
+}
+
+function duration(minutes){
+  const m = Math.max(0,Math.round(minutes));
+
+  return Math.floor(m/60)+"h "+(m%60)+"m";
+}
+
+function isToday(value){
+  return new Date(value).toDateString() ===
+    new Date().toDateString();
+}
+
+function showToast(message){
+  clearTimeout(toastTimer);
+
+  $("toast").textContent = message;
+  $("toast").classList.add("show");
+
+  toastTimer = setTimeout(()=>{
+    $("toast").classList.remove("show");
+  },2800);
+}
+
+function setStatus(id,message){
+  $(id).textContent = message;
+}
+
+function latest(type){
+  return entries.find(entry=>entry.type===type);
+}
+
+/* STORAGE */
+
+function updateStorageStatus(){
+  $("storageStatus").textContent = storageAvailable
+    ? "Local browser storage"
+    : "Storage unavailable — session only";
+}
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+
+    if(raw){
+      const parsed = JSON.parse(raw);
+
+      if(!Array.isArray(parsed)){
+        throw new Error("Invalid saved data");
+      }
+
+      entries = parsed.filter(entry=>
+        entry &&
+        typeof entry.id==="string" &&
+        typeof entry.type==="string" &&
+        Number.isFinite(new Date(entry.time).getTime())
+      );
+    }
+  }catch{
+    storageAvailable = false;
+  }
+
+  try{
+    const raw = localStorage.getItem(HEALTH_KEY);
+
+    if(raw){
+      const parsed = JSON.parse(raw);
+
+      if(Array.isArray(parsed.records)){
+        health = {
+          records:parsed.records.filter(r=>
+            r &&
+            Number.isFinite(r.start) &&
+            Number.isFinite(r.end) &&
+            r.end>r.start &&
+            (
+              r.stage==="In Bed" ||
+              Object.hasOwn(stageColors,r.stage)
+            )
+          ),
+          lastSync:parsed.lastSync || null
+        };
+      }
+    }
+  }catch{
+    storageAvailable = false;
+  }
+
+  updateStorageStatus();
+}
+
+function persistData(){
+  try{
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(entries)
+    );
+
+    storageAvailable = true;
+  }catch{
+    storageAvailable = false;
+  }
+
+  updateStorageStatus();
+  return storageAvailable;
+}
+
+function persistHealth(){
+  try{
+    localStorage.setItem(
+      HEALTH_KEY,
+      JSON.stringify(health)
+    );
+
+    return true;
+  }catch{
+    storageAvailable = false;
+    updateStorageStatus();
+    return false;
+  }
+}
 
 function addEntry(type,data){
+  const id = globalThis.crypto?.randomUUID?.() ||
+    Date.now()+"-"+Math.random().toString(36).slice(2);
 
   entries.unshift({
-    id:globalThis.crypto?.randomUUID?.() ||
-      Date.now()+"-"+Math.random(),
-
+    id,
     type,
     time:new Date().toISOString(),
     ...data
   });
 
-  store(DATA_KEY,entries);
-  render();
-}
+  const saved = persistData();
 
-function latest(type){
-  return entries.find(e=>e.type===type);
-}
+  renderDashboard();
 
-function todayTotal(type){
-
-  const today=new Date().toDateString();
-
-  return entries.filter(e=>
-    e.type===type &&
-    new Date(e.time).toDateString()===today
-  ).reduce((sum,e)=>
-    sum+Number(e.amount||0),0
+  showToast(saved
+    ? "Entry saved"
+    : "Recorded for this session only"
   );
 }
 
-function renderFeelings(){
+function deleteEntry(id){
+  if(!confirm("Delete this recorded entry?")) return;
 
-  const holder=$("feelings");
-  holder.replaceChildren();
+  entries = entries.filter(entry=>entry.id!==id);
 
-  const current=latest("feeling");
+  const saved = persistData();
 
-  levels.forEach((level,index)=>{
+  renderDashboard();
 
-    const button=document.createElement("button");
-
-    button.className="feeling";
-
-    if(current?.level===index){
-      button.classList.add("active");
-    }
-
-    const dot=document.createElement("span");
-
-    dot.className="dot";
-    dot.style.background=colors[index];
-
-    button.append(
-      dot,
-      document.createTextNode(level)
-    );
-
-    button.onclick=()=>{
-      addEntry("feeling",{level:index});
-    };
-
-    holder.append(button);
-  });
-
-  $("feelingStatus").textContent=current
-    ?"Latest check-in: "+levels[current.level]
-    :"No check-ins yet.";
+  showToast(saved
+    ? "Entry deleted"
+    : "Removed from this session only"
+  );
 }
 
-const symptomNames=[
-  "Headache",
-  "Cough",
-  "Sore throat",
-  "Congestion",
-  "Fatigue",
-  "Chills",
-  "Nausea",
-  "Body aches",
-  "Runny nose",
-  "Fever",
-  "Stomach discomfort"
-];
+/*
+  Older versions used different hydration and rest units.
 
-let selectedSymptoms=new Set();
+  New entries explicitly save their units.
+  Unlabelled values are interpreted using the
+  previous versions' common input ranges.
+*/
 
-symptomNames.forEach(name=>{
+function entryAmount(entry){
+  const amount = Number(entry.amount)||0;
 
-  const button=document.createElement("button");
+  if(entry.type==="water"){
+    if(entry.unit==="mL") return amount/240;
+    if(entry.unit==="cups") return amount;
 
-  button.className="secondary";
-  button.textContent=name;
+    return amount>=100 ? amount/240 : amount;
+  }
 
-  button.onclick=()=>{
+  if(entry.type==="rest"){
+    if(entry.unit==="minutes") return amount/60;
+    if(entry.unit==="hours") return amount;
 
-    if(selectedSymptoms.has(name)){
-      selectedSymptoms.delete(name);
-    }else{
-      selectedSymptoms.add(name);
-    }
+    return amount>24 ? amount/60 : amount;
+  }
 
-    button.classList.toggle(
-      "selected",
-      selectedSymptoms.has(name)
+  return amount;
+}
+
+function todayTotal(type){
+  return entries
+    .filter(entry=>
+      entry.type===type &&
+      isToday(entry.time)
+    )
+    .reduce((sum,entry)=>
+      sum+entryAmount(entry),0
     );
-  };
+}
 
-  $("symptoms").append(button);
+function roundValue(value){
+  return Math.round(value*100)/100;
+}
+
+/* INTRO */
+
+function finishIntro(){
+  clearTimeout(introTimer);
+
+  $("intro").classList.add("finished");
+  $("intro").setAttribute("aria-hidden","true");
+  $("intro").inert = true;
+
+  $("app").inert = false;
+
+  document.body.classList.add("ready");
+
+  drawChart();
+}
+
+function startIntro(){
+  clearTimeout(introTimer);
+
+  document.body.classList.remove("ready");
+
+  $("app").inert = true;
+  $("intro").inert = false;
+
+  $("intro").classList.remove("finished");
+  $("intro").setAttribute("aria-hidden","false");
+
+  const fill = document.querySelector(".loading-fill");
+
+  fill.style.animation = "none";
+  void fill.offsetWidth;
+  fill.style.animation = "";
+
+  $("skipIntro").focus();
+
+  introTimer = setTimeout(
+    finishIntro,
+    matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 100 : 2800
+  );
+}
+
+$("skipIntro").onclick = finishIntro;
+$("replayIntro").onclick = startIntro;
+
+document.addEventListener("keydown",event=>{
+  if(
+    event.key==="Escape" &&
+    !$("intro").classList.contains("finished")
+  ){
+    finishIntro();
+  }
 });
 
-function saveSymptoms(){
+/* CLOCK */
 
-  addEntry("symptoms",{
-    symptoms:[...selectedSymptoms]
+function updateClock(){
+  const now = new Date();
+
+  $("clock").textContent = now.toLocaleTimeString([],{
+    hour:"numeric",
+    minute:"2-digit"
   });
 
-  selectedSymptoms.clear();
-
-  $("symptoms").querySelectorAll("button")
-    .forEach(b=>b.classList.remove("selected"));
+  $("date").textContent = now.toLocaleDateString([],{
+    weekday:"long",
+    month:"long",
+    day:"numeric"
+  });
 }
 
-function saveTemperature(){
+updateClock();
+setInterval(updateClock,1000);
 
-  const raw=$("temperature").value.trim();
-  const value=Number(raw);
-  const unit=$("tempUnit").value;
+/* CHECK-IN */
+
+function renderFeelings(){
+  $("feelings").replaceChildren();
+
+  levels.forEach((level,index)=>{
+    const button = make("button","feeling");
+
+    button.style.setProperty("--level",level.color);
+
+    button.setAttribute(
+      "aria-pressed",
+      String(selectedFeeling===index)
+    );
+
+    if(selectedFeeling===index){
+      button.classList.add("selected");
+    }
+
+    const info = make("div","feeling-info");
+
+    info.append(
+      make("strong","",level.name),
+      make("small","",level.description)
+    );
+
+    button.append(
+      make("span","feeling-indicator"),
+      info,
+      make("span","radio")
+    );
+
+    button.onclick = ()=>{
+      selectedFeeling = index;
+
+      setStatus("feelingStatus","");
+
+      renderFeelings();
+
+      $("feelings").children[index].focus();
+    };
+
+    $("feelings").append(button);
+  });
+}
+
+$("saveFeeling").onclick = ()=>{
+  if(selectedFeeling===null){
+    setStatus(
+      "feelingStatus",
+      "Select how you're feeling first."
+    );
+    return;
+  }
+
+  addEntry("feeling",{
+    level:selectedFeeling
+  });
+
+  setStatus("feelingStatus","Check-in recorded.");
+};
+
+/* SYMPTOMS */
+
+symptomOptions.forEach(symptom=>{
+  const label = make("label","symptom");
+  const input = document.createElement("input");
+
+  input.type = "checkbox";
+  input.value = symptom;
+
+  label.append(
+    input,
+    make("span","",symptom)
+  );
+
+  $("symptoms").append(label);
+});
+
+$("saveSymptoms").onclick = ()=>{
+  const selected = [
+    ...$("symptoms").querySelectorAll("input:checked")
+  ].map(input=>input.value);
+
+  const other = $("otherSymptoms").value.trim();
+
+  if(other) selected.push(other);
+
+  addEntry("symptoms",{symptoms:selected});
+
+  $("otherSymptoms").value = "";
+
+  setStatus(
+    "symptomStatus",
+    selected.length
+      ? selected.length+" symptoms recorded."
+      : "No symptoms reported."
+  );
+};
+
+/* TEMPERATURE */
+
+$("saveTemperature").onclick = ()=>{
+  const raw = $("temperatureInput").value.trim();
+  const value = Number(raw);
+  const unit = $("temperatureUnit").value;
 
   if(!raw || !Number.isFinite(value)){
-    alert("Enter a valid thermometer reading.");
+    setStatus(
+      "temperatureStatus",
+      "Enter a valid thermometer reading."
+    );
+    return;
+  }
+
+  const celsius = unit==="F"
+    ? (value-32)*5/9
+    : value;
+
+  if(celsius<25 || celsius>46){
+    setStatus(
+      "temperatureStatus",
+      "Check the reading and unit. If accurate, seek emergency medical help."
+    );
     return;
   }
 
   addEntry("temperature",{value,unit});
 
-  $("temperature").value="";
-}
+  $("temperatureInput").value = "";
 
-function addWater(amount){
-  addEntry("water",{amount});
-}
+  setStatus(
+    "temperatureStatus",
+    celsius<35
+      ? "Tell a trusted adult and seek emergency medical help."
+      : celsius>=40
+        ? "Tell a trusted adult and seek urgent medical advice."
+        : "Temperature recorded."
+  );
+};
 
-function addRest(amount){
-  addEntry("rest",{amount});
-}
+$("temperatureUnit").onchange = renderSummary;
 
-function saveMedicine(){
+/* HYDRATION */
 
-  const name=$("medicine").value.trim();
-
-  if(!name)return;
-
-  addEntry("medicine",{
-    name,
-    notes:$("medicineNotes").value.trim()
+document.querySelectorAll("[data-water]")
+  .forEach(button=>{
+    button.onclick = ()=>{
+      addEntry("water",{
+        amount:Number(button.dataset.water),
+        unit:"cups"
+      });
+    };
   });
 
-  $("medicine").value="";
-  $("medicineNotes").value="";
-}
+/* REST */
 
-function saveJournal(){
+$("saveRest").onclick = ()=>{
+  const value = Number($("restInput").value);
 
-  const text=$("journal").value.trim();
+  if(
+    !Number.isFinite(value) ||
+    value<.25 ||
+    value>24
+  ){
+    setStatus(
+      "restStatus",
+      "Enter a completed rest period between 0.25 and 24 hours."
+    );
+    return;
+  }
 
-  if(!text)return;
+  if(todayTotal("rest")+value>24){
+    setStatus(
+      "restStatus",
+      "Today's recorded rest would exceed 24 hours. Check your entries."
+    );
+    return;
+  }
+
+  addEntry("rest",{
+    amount:value,
+    unit:"hours"
+  });
+
+  $("restInput").value = "";
+
+  setStatus("restStatus","Rest recorded.");
+};
+
+/* MEDICATION */
+
+$("saveMedicine").onclick = ()=>{
+  const name = $("medicineName").value.trim();
+  const notes = $("medicineNotes").value.trim();
+
+  if(!name){
+    setStatus(
+      "medicineStatus",
+      "Enter the medication name."
+    );
+    return;
+  }
+
+  addEntry("medicine",{name,notes});
+
+  $("medicineName").value = "";
+  $("medicineNotes").value = "";
+
+  setStatus(
+    "medicineStatus",
+    "Medication recorded with the current time."
+  );
+};
+
+/* JOURNAL */
+
+$("saveJournal").onclick = ()=>{
+  const text = $("journalInput").value.trim();
+
+  if(!text){
+    setStatus(
+      "journalStatus",
+      "Write something before saving."
+    );
+    return;
+  }
 
   addEntry("journal",{text});
 
-  $("journal").value="";
-}
+  $("journalInput").value = "";
 
-function duration(minutes){
+  setStatus("journalStatus","Journal entry saved.");
+};
 
-  const m=Math.max(0,Math.round(minutes));
+/* APPLE HEALTH CONNECTION */
 
-  return Math.floor(m/60)+"h "+(m%60)+"m";
-}
+$("connectHealth").onclick = ()=>{
+  $("connectDialog").showModal();
+};
 
-function formatTime(value){
+$("closeConnect").onclick = ()=>{
+  $("connectDialog").close();
+};
 
-  return new Date(value).toLocaleTimeString(
-    undefined,{
-      hour:"numeric",
-      minute:"2-digit"
-    }
-  );
-}
-
-/* APPLE HEALTH SHORTCUT */
-
-function installShortcut(){
-
+$("installShortcut").onclick = ()=>{
   window.open(
     SHORTCUT_URL,
     "_blank",
     "noopener,noreferrer"
   );
-}
+};
 
 function runShortcut(){
-
-  window.location.href=
+  window.location.href =
     "shortcuts://run-shortcut?name="+
     encodeURIComponent(SHORTCUT_NAME);
 }
 
-function openImport(){
+$("runShortcut").onclick = runShortcut;
+$("syncHealth").onclick = runShortcut;
 
-  $("sleepInput").value="";
-  $("importStatus").textContent="";
-  $("importStatus").className="";
+function openImport(){
+  $("sleepInput").value = "";
+  $("importStatus").textContent = "";
+  $("importStatus").style.color = "";
 
   $("importDialog").showModal();
 }
 
-function setImportStatus(message,type){
+$("importHealth").onclick = openImport;
 
-  $("importStatus").textContent=message;
-  $("importStatus").className=type||"";
+$("connectImport").onclick = ()=>{
+  $("connectDialog").close();
+  openImport();
+};
+
+$("closeImport").onclick = ()=>{
+  $("sleepInput").value = "";
+  $("importDialog").close();
+};
+
+$("importDialog").addEventListener("close",()=>{
+  $("sleepInput").value = "";
+});
+
+function importStatus(message,error=false){
+  $("importStatus").textContent = message;
+
+  $("importStatus").style.color = error
+    ? "var(--red)"
+    : "var(--green)";
 }
 
-async function pasteClipboard(){
-
+$("pasteClipboard").onclick = async ()=>{
   try{
+    const text = await navigator.clipboard.readText();
 
-    $("sleepInput").value=
-      await navigator.clipboard.readText();
+    $("sleepInput").value = text;
 
-    setImportStatus(
-      "Clipboard pasted. Press Import.",
-      "success"
+    importStatus(
+      text
+        ? "Clipboard pasted. Press Import."
+        : "Your clipboard is empty.",
+      !text
     );
 
   }catch{
-
-    setImportStatus(
+    importStatus(
       "Tap and hold inside the text box, then select Paste.",
-      ""
+      true
     );
   }
-}
+};
 
 /* APPLE DATE PARSER */
 
 function cleanText(value){
-
   return String(value)
     .replace(/[\u00a0\u202f\u2007]/g," ")
     .replace(/[\u200e\u200f\u200b\ufeff]/g,"")
@@ -1052,78 +2568,45 @@ function cleanText(value){
 }
 
 function parseAppleDate(value){
+  const text = cleanText(value);
 
-  const text=cleanText(value);
-
-  const months={
-    jan:0,
-    feb:1,
-    mar:2,
-    apr:3,
-    may:4,
-    jun:5,
-    jul:6,
-    aug:7,
-    sep:8,
-    oct:9,
-    nov:10,
-    dec:11
+  const months = {
+    jan:0,feb:1,mar:2,apr:3,
+    may:4,jun:5,jul:6,aug:7,
+    sep:8,oct:9,nov:10,dec:11
   };
 
-  /*
-    Supports Apple dates such as:
-
-    Nov 25, 2026 at 10:15 AM
-
-    Including narrow nonbreaking spaces.
-  */
-
-  const match=text.match(
+  const match = text.match(
     /^([a-z]+)\.?\s+(\d{1,2}),?\s+(\d{4})\s+(?:at\s+)?(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)$/i
   );
 
   if(match){
+    const month =
+      months[match[1].slice(0,3).toLowerCase()];
 
-    const month=months[
-      match[1].slice(0,3).toLowerCase()
-    ];
+    const day = Number(match[2]);
+    const year = Number(match[3]);
 
-    const day=Number(match[2]);
-    const year=Number(match[3]);
+    let hour = Number(match[4]);
 
-    let hour=Number(match[4]);
-
-    const minute=Number(match[5]);
-    const second=Number(match[6]||0);
-    const period=match[7].toUpperCase();
+    const minute = Number(match[5]);
+    const second = Number(match[6]||0);
+    const period = match[7].toUpperCase();
 
     if(
       month===undefined ||
-      day<1 ||
-      day>31 ||
-      hour<1 ||
-      hour>12 ||
-      minute>59 ||
-      second>59
+      day<1 || day>31 ||
+      hour<1 || hour>12 ||
+      minute>59 || second>59
     ){
       return NaN;
     }
 
-    if(hour===12){
-      hour=0;
-    }
+    if(hour===12) hour=0;
+    if(period==="PM") hour+=12;
 
-    if(period==="PM"){
-      hour+=12;
-    }
-
-    const date=new Date(
-      year,
-      month,
-      day,
-      hour,
-      minute,
-      second
+    const date = new Date(
+      year,month,day,hour,minute,second
     );
 
     if(
@@ -1139,23 +2622,17 @@ function parseAppleDate(value){
     return date.getTime();
   }
 
-  /*
-    Fallback for ISO 8601 and other
-    browser-supported date formats.
-  */
-
   return Date.parse(
     text.replace(/\s+at\s+/i," ")
   );
 }
 
-/* SLEEP STAGE RECOGNITION */
+/* SLEEP STAGES */
 
 function normalizeStage(value){
+  const v = cleanText(value).toLowerCase();
 
-  const v=cleanText(value).toLowerCase();
-
-  const numeric={
+  const numeric = {
     "0":"In Bed",
     "1":"Asleep",
     "2":"Awake",
@@ -1164,74 +2641,47 @@ function normalizeStage(value){
     "5":"REM"
   };
 
-  if(Object.prototype.hasOwnProperty.call(numeric,v)){
+  if(Object.hasOwn(numeric,v)){
     return numeric[v];
   }
 
-  if(/in[\s_-]*bed/.test(v)){
-    return "In Bed";
-  }
-
-  if(/awake/.test(v)){
-    return "Awake";
-  }
-
-  if(/rem/.test(v)){
-    return "REM";
-  }
-
-  if(/core/.test(v)){
-    return "Core";
-  }
-
-  if(/deep/.test(v)){
-    return "Deep";
-  }
-
-  if(/asleep|sleeping/.test(v)){
-    return "Asleep";
-  }
+  if(/in[\s_-]*bed/.test(v)) return "In Bed";
+  if(/awake/.test(v)) return "Awake";
+  if(/rem/.test(v)) return "REM";
+  if(/core/.test(v)) return "Core";
+  if(/deep/.test(v)) return "Deep";
+  if(/asleep|sleeping/.test(v)) return "Asleep";
 
   return null;
 }
 
-/* UPDATED IMPORTER */
+/* PLAIN TEXT IMPORTER */
 
 function parseSleep(text){
+  const records = [];
 
-  const records=[];
+  let skipped = 0;
+  let zeroLength = 0;
 
-  let skipped=0;
-  let zeroLength=0;
-
-  const lines=cleanText(text).split(/\r\n|\n|\r/);
+  const lines = cleanText(text).split(/\r\n|\n|\r/);
 
   for(const rawLine of lines){
+    const line = cleanText(rawLine);
 
-    const line=cleanText(rawLine);
+    if(!line) continue;
 
-    if(!line)continue;
+    let parts = line.split("|").map(cleanText);
 
-    let parts=line.split("|").map(cleanText);
-
-    /*
-      Also supports the older shortcut format
-      where dates were joined without separators.
-    */
+    // Supports older exports without pipe separators.
 
     if(parts.length!==3){
-
-      const pattern=
+      const pattern =
         /^([a-z]+\.?\s+\d{1,2},?\s+\d{4}\s+(?:at\s+)?\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM))\s*([a-z]+\.?\s+\d{1,2},?\s+\d{4}\s+(?:at\s+)?\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM))\s*(.+)$/i;
 
-      const match=line.match(pattern);
+      const match = line.match(pattern);
 
       if(match){
-        parts=[
-          match[1],
-          match[2],
-          match[3]
-        ];
+        parts = [match[1],match[2],match[3]];
       }
     }
 
@@ -1240,9 +2690,9 @@ function parseSleep(text){
       continue;
     }
 
-    const start=parseAppleDate(parts[0]);
-    const end=parseAppleDate(parts[1]);
-    const stage=normalizeStage(parts[2]);
+    const start = parseAppleDate(parts[0]);
+    const end = parseAppleDate(parts[1]);
+    const stage = normalizeStage(parts[2]);
 
     if(
       !Number.isFinite(start) ||
@@ -1252,12 +2702,6 @@ function parseSleep(text){
       skipped++;
       continue;
     }
-
-    /*
-      Apple sometimes exports intervals whose
-      start and end appear identical because
-      the displayed dates omit seconds.
-    */
 
     if(start===end){
       zeroLength++;
@@ -1273,178 +2717,138 @@ function parseSleep(text){
       continue;
     }
 
-    records.push({
-      start,
-      end,
-      stage
-    });
+    records.push({start,end,stage});
   }
 
-  return {
-    records,
-    skipped,
-    zeroLength
-  };
+  return {records,skipped,zeroLength};
 }
 
-function importSleep(){
-
-  const text=$("sleepInput").value.trim();
+$("confirmImport").onclick = ()=>{
+  const text = $("sleepInput").value.trim();
 
   if(!text){
-
-    setImportStatus(
-      "Paste your sleep data first.",
-      "error"
-    );
-
+    importStatus("Paste your sleep data first.",true);
     return;
   }
 
   if(text.length>1000000){
-
-    setImportStatus(
-      "The import is too large.",
-      "error"
-    );
-
+    importStatus("The import is too large.",true);
     return;
   }
 
-  const result=parseSleep(text);
+  const result = parseSleep(text);
 
   if(!result.records.length){
-
-    setImportStatus(
+    importStatus(
       "No readable sleep records were found. "+
-      "Make sure you copied the output from Sick Sleep Sync.",
-      "error"
+      "Run Sick Sleep Sync and paste its plain-text output.",
+      true
     );
-
     return;
   }
 
-  const unique=new Map();
+  const unique = new Map();
 
   for(const record of health.records){
-
-    const key=
-      record.start+"|"+
-      record.end+"|"+
-      record.stage;
-
-    unique.set(key,record);
+    unique.set(
+      record.start+"|"+record.end+"|"+record.stage,
+      record
+    );
   }
 
-  const previousCount=unique.size;
+  const previousCount = unique.size;
 
   for(const record of result.records){
-
-    const key=
-      record.start+"|"+
-      record.end+"|"+
-      record.stage;
-
-    unique.set(key,record);
+    unique.set(
+      record.start+"|"+record.end+"|"+record.stage,
+      record
+    );
   }
 
-  const added=unique.size-previousCount;
+  const added = unique.size-previousCount;
 
-  const duplicates=
-    result.records.length-added;
+  const duplicates = result.records.length-added;
 
-  health={
+  health = {
     records:[...unique.values()]
       .sort((a,b)=>b.end-a.end),
 
     lastSync:new Date().toISOString()
   };
 
-  const saved=store(HEALTH_KEY,health);
+  const saved = persistHealth();
 
   renderSleep();
 
-  $("sleepInput").value="";
+  $("sleepInput").value = "";
 
-  let message=
+  let message =
     "Import successful!\n"+
     added+" new sleep records added.";
 
   if(duplicates){
-    message+="\n"+duplicates+
+    message += "\n"+duplicates+
       " duplicate records ignored.";
   }
 
   if(result.zeroLength){
-    message+="\n"+result.zeroLength+
+    message += "\n"+result.zeroLength+
       " zero-duration records ignored.";
   }
 
   if(result.skipped){
-    message+="\n"+result.skipped+
+    message += "\n"+result.skipped+
       " unreadable records skipped.";
   }
 
   if(!saved){
-    message+="\nBrowser storage failed. "+
+    message += "\nBrowser storage failed. "+
       "Records may disappear after refreshing.";
   }
 
-  setImportStatus(message,saved?"success":"error");
-}
+  importStatus(message,!saved);
+
+  showToast(
+    saved
+      ? "Sleep data imported"
+      : "Sleep imported for this session only"
+  );
+};
 
 /* SLEEP SESSION CALCULATIONS */
 
 function buildSessions(records){
-
-  const sorted=records.filter(r=>
+  const sorted = records.filter(r=>
     r.stage!=="In Bed" &&
-    Object.prototype.hasOwnProperty.call(stageColors,r.stage) &&
+    Object.hasOwn(stageColors,r.stage) &&
     Number.isFinite(r.start) &&
     Number.isFinite(r.end) &&
     r.end>r.start
   ).sort((a,b)=>a.start-b.start);
 
-  const groups=[];
+  const groups = [];
 
   for(const record of sorted){
-
-    const last=groups[groups.length-1];
-
-    /*
-      A gap greater than 90 minutes starts
-      a separate estimated sleep session.
-    */
+    const last = groups[groups.length-1];
 
     if(!last || record.start-last.end>90*60000){
-
       groups.push({
         start:record.start,
         end:record.end,
         records:[record]
       });
-
     }else{
-
-      last.end=Math.max(
-        last.end,
-        record.end
-      );
-
+      last.end = Math.max(last.end,record.end);
       last.records.push(record);
     }
   }
 
   return groups.map(group=>{
-
-    const boundaries=[...new Set(
-      group.records.flatMap(r=>[
-        r.start,
-        r.end
-      ])
+    const boundaries = [...new Set(
+      group.records.flatMap(r=>[r.start,r.end])
     )].sort((a,b)=>a-b);
 
-    const totals={
+    const totals = {
       Awake:0,
       REM:0,
       Core:0,
@@ -1453,58 +2857,48 @@ function buildSessions(records){
     };
 
     for(let i=0;i<boundaries.length-1;i++){
+      const a = boundaries[i];
+      const b = boundaries[i+1];
 
-      const a=boundaries[i];
-      const b=boundaries[i+1];
-
-      const active=group.records.filter(r=>
+      const active = group.records.filter(r=>
         r.start<b && r.end>a
       );
 
-      const stages=[...new Set(
+      const stages = [...new Set(
         active.map(r=>r.stage)
       )];
 
-      let chosen=null;
-
-      const specific=stages.filter(s=>
+      const specific = stages.filter(s=>
         ["REM","Core","Deep"].includes(s)
       );
 
+      let chosen = null;
+
       if(stages.includes("Awake")){
-
-        chosen="Awake";
-
+        chosen = "Awake";
       }else if(specific.length===1){
-
-        chosen=specific[0];
-
-      }else if(specific.length>1){
-
-        chosen="Asleep";
-
-      }else if(stages.includes("Asleep")){
-
-        chosen="Asleep";
+        chosen = specific[0];
+      }else if(
+        specific.length>1 ||
+        stages.includes("Asleep")
+      ){
+        chosen = "Asleep";
       }
 
       if(chosen){
-
-        totals[chosen]+=(b-a)/60000;
+        totals[chosen] += (b-a)/60000;
       }
     }
-
-    const asleep=
-      totals.REM+
-      totals.Core+
-      totals.Deep+
-      totals.Asleep;
 
     return {
       start:group.start,
       end:group.end,
       totals,
-      asleep
+      asleep:
+        totals.REM+
+        totals.Core+
+        totals.Deep+
+        totals.Asleep
     };
 
   }).filter(s=>s.asleep>0)
@@ -1514,387 +2908,672 @@ function buildSessions(records){
 /* SLEEP DASHBOARD */
 
 function renderSleep(){
+  const sessions = buildSessions(health.records);
+  const recent = sessions[0];
 
-  const sessions=buildSessions(health.records);
-
-  const recent=sessions[0];
-
-  $("healthStatus").textContent=
+  $("healthStatus").textContent =
     health.lastSync
-      ?"Data imported"
-      :"Not imported";
+      ? "Data imported"
+      : "Not imported";
 
   $("healthStatus").classList.toggle(
     "connected",
     Boolean(health.lastSync)
   );
 
-  $("lastSync").textContent=
+  $("lastSync").textContent =
     health.lastSync
-      ?"Last imported: "+
-        new Date(health.lastSync).toLocaleString()
-      :"No sleep data imported yet.";
+      ? "Last imported: "+formatTime(health.lastSync)
+      : "No sleep data imported yet.";
 
-  $("recordCount").textContent=
+  $("recordCount").textContent =
     health.records.length
-      ?health.records.length+
-        " saved records · "+
-        sessions.length+
-        " estimated sleep sessions"
-      :"";
+      ? health.records.length+" saved records · "+
+        sessions.length+" estimated sleep sessions"
+      : "";
 
-  $("sleepHistory").replaceChildren();
   $("sleepStages").replaceChildren();
   $("sleepLegend").replaceChildren();
+  $("sleepHistory").replaceChildren();
 
-  $("stagesSection").hidden=!recent;
+  $("stagesSection").hidden = !recent;
+  $("sleepHistorySection").hidden = !recent;
 
   if(!recent){
+    $("sleepDuration").textContent = "—";
+    $("bedtime").textContent = "—";
+    $("wakeTime").textContent = "—";
 
-    $("sleepDuration").textContent="--";
-    $("bedtime").textContent="--";
-    $("wakeTime").textContent="--";
-
-    $("sleepDate").textContent=
+    $("sleepDate").textContent =
       health.lastSync
-        ?"No asleep intervals were found."
-        :"";
+        ? "No asleep intervals found"
+        : "No sleep imported";
 
     return;
   }
 
-  $("sleepDuration").textContent=
+  $("sleepDuration").textContent =
     duration(recent.asleep);
 
-  $("bedtime").textContent=
-    formatTime(recent.start);
+  $("bedtime").textContent =
+    clockTime(recent.start);
 
-  $("wakeTime").textContent=
-    formatTime(recent.end);
+  $("wakeTime").textContent =
+    clockTime(recent.end);
 
-  $("sleepDate").textContent=
-    "Latest recorded session · "+
-    new Date(recent.end).toLocaleDateString();
+  $("sleepDate").textContent =
+    new Date(recent.end).toLocaleDateString([],{
+      weekday:"long",
+      month:"short",
+      day:"numeric"
+    });
 
-  const total=Object.values(recent.totals)
+  const total = Object.values(recent.totals)
     .reduce((a,b)=>a+b,0);
 
   Object.entries(recent.totals)
     .forEach(([stage,minutes])=>{
+      if(minutes<=0) return;
 
-      if(minutes<=0)return;
+      const percent = minutes/total*100;
 
-      const segment=document.createElement("div");
+      const segment = make("div");
 
-      segment.style.width=
-        (minutes/total*100)+"%";
+      segment.style.width = percent+"%";
+      segment.style.background = stageColors[stage];
 
-      segment.style.background=
-        stageColors[stage];
-
-      segment.title=
-        stage+": "+duration(minutes);
+      segment.title = stage+": "+duration(minutes);
 
       $("sleepStages").append(segment);
 
-      const label=document.createElement("span");
+      const row = make("div","sleep-stage");
 
-      const dot=document.createElement("i");
+      const dot = make("span","stage-dot");
+      dot.style.background = stageColors[stage];
 
-      dot.style.background=stageColors[stage];
+      const name = make("span","stage-name",stage);
 
-      label.append(
+      const track = make("div","stage-track");
+      const fill = make("div","stage-fill");
+
+      fill.style.width = percent+"%";
+      fill.style.background = stageColors[stage];
+
+      track.append(fill);
+
+      row.append(
         dot,
-        document.createTextNode(
-          stage+" "+duration(minutes)
-        )
+        name,
+        track,
+        make("span","stage-duration",duration(minutes))
       );
 
-      $("sleepLegend").append(label);
+      $("sleepLegend").append(row);
     });
 
-  const heading=document.createElement("h3");
-
-  heading.textContent="Sleep history";
-  heading.style.marginTop="22px";
-
-  $("sleepHistory").append(heading);
-
   sessions.slice(0,30).forEach(session=>{
+    const item = make("div","sleep-history-item");
 
-    const item=document.createElement("div");
+    const info = make("div");
 
-    item.className="history-item";
+    info.append(
+      make(
+        "strong","",
+        new Date(session.end).toLocaleDateString([],{
+          weekday:"short",
+          month:"short",
+          day:"numeric"
+        })
+      ),
+      make(
+        "p","muted small",
+        clockTime(session.start)+" – "+
+        clockTime(session.end)
+      )
+    );
 
-    const title=document.createElement("strong");
-
-    title.textContent=
-      duration(session.asleep)+" recorded sleep";
-
-    const date=document.createElement("small");
-
-    date.textContent=
-      new Date(session.end).toLocaleDateString()+
-      " · "+
-      formatTime(session.start)+
-      " – "+
-      formatTime(session.end);
-
-    item.append(title,date);
+    item.append(
+      info,
+      make("strong","",duration(session.asleep))
+    );
 
     $("sleepHistory").append(item);
   });
 }
 
-function clearSleep(){
-
+$("disconnectHealth").onclick = ()=>{
   if(!confirm(
-    "Clear imported sleep data from this browser? "+
-    "Your Apple Health records will not be deleted."
+    "Clear imported sleep records from this browser? "+
+    "Your Apple Health records and permissions will not be changed."
   )){
     return;
   }
 
-  health={
+  try{
+    localStorage.removeItem(HEALTH_KEY);
+  }catch{
+    showToast("Unable to clear saved sleep records.");
+    return;
+  }
+
+  health = {
     records:[],
     lastSync:null
   };
 
-  store(HEALTH_KEY,health);
-
   renderSleep();
-}
 
-/* RECOVERY HISTORY */
+  showToast("Imported sleep data cleared");
+};
 
-function describe(e){
+/* DASHBOARD SUMMARY */
 
-  switch(e.type){
+function renderSummary(){
+  const feeling = latest("feeling");
+  const level = feeling && levels[feeling.level];
 
-    case "feeling":
-      return levels[e.level]||
-        "Feeling recorded";
+  if(level){
+    $("currentFeeling").textContent = level.name;
+    $("currentFeeling").style.color = level.color;
 
-    case "symptoms":
-      return "Symptoms: "+
-        (e.symptoms?.join(", ")||
-          "None selected");
+    $("statusOrb").style.color = level.color;
+    $("statusOrb").classList.add("active");
 
-    case "temperature":
-      return "Temperature: "+
-        e.value+"°"+e.unit;
+    $("lastCheckin").textContent =
+      "Recorded "+formatTime(feeling.time);
+  }else{
+    $("currentFeeling").textContent = "Not recorded";
+    $("currentFeeling").style.color = "";
 
-    case "water":
-      return "Water: "+
-        e.amount+" mL";
+    $("statusOrb").style.color = "";
+    $("statusOrb").classList.remove("active");
 
-    case "rest":
-      return "Rest: "+
-        e.amount+" minutes";
-
-    case "medicine":
-      return "Medication: "+
-        e.name+
-        (e.notes?" — "+e.notes:"");
-
-    case "journal":
-      return "Journal: "+e.text;
-
-    default:
-      return "Recovery record";
-  }
-}
-
-function renderHistory(){
-
-  const holder=$("history");
-
-  holder.replaceChildren();
-
-  if(!entries.length){
-
-    const p=document.createElement("p");
-
-    p.textContent="No recovery records yet.";
-
-    holder.append(p);
-
-    return;
+    $("lastCheckin").textContent =
+      "Complete a check-in to get started.";
   }
 
-  entries.slice(0,50).forEach(e=>{
+  const temperature = latest("temperature");
 
-    const item=document.createElement("div");
+  if(temperature){
+    const unit = $("temperatureUnit").value;
 
-    item.className="history-item";
+    let value = Number(temperature.value);
 
-    const text=document.createElement("div");
+    if(temperature.unit!==unit){
+      value = unit==="F"
+        ? value*9/5+32
+        : (value-32)*5/9;
+    }
 
-    text.textContent=describe(e);
+    $("temperatureValue").textContent =
+      value.toFixed(1)+"°"+unit;
 
-    const date=document.createElement("small");
-
-    date.textContent=
-      new Date(e.time).toLocaleString();
-
-    item.append(text,date);
-
-    holder.append(item);
-  });
-}
-
-function clearHistory(){
-
-  if(!confirm("Clear all recovery history?")){
-    return;
+    $("temperatureTime").textContent =
+      formatTime(temperature.time);
+  }else{
+    $("temperatureValue").textContent = "—";
+    $("temperatureTime").textContent =
+      "No readings recorded";
   }
 
-  entries=[];
+  const water = roundValue(todayTotal("water"));
+  const rest = roundValue(todayTotal("rest"));
 
-  store(DATA_KEY,entries);
+  $("waterValue").textContent =
+    water+(water===1?" cup":" cups");
 
-  render();
+  $("restValue").textContent =
+    rest+(rest===1?" hr":" hrs");
 }
 
-/* RECOVERY CHART */
+/* RECOVERY GRAPH */
 
 function drawChart(){
+  const canvas = $("recoveryChart");
+  const context = canvas.getContext("2d");
 
-  const canvas=$("chart");
+  if(!context) return;
 
-  const ctx=canvas.getContext("2d");
+  const bounds = canvas.getBoundingClientRect();
+  const ratio = window.devicePixelRatio||1;
 
-  if(!ctx)return;
+  canvas.width = Math.round(bounds.width*ratio);
+  canvas.height = Math.round(bounds.height*ratio);
 
-  const ratio=window.devicePixelRatio||1;
+  context.scale(ratio,ratio);
 
-  const w=canvas.clientWidth;
-  const h=180;
+  const width = bounds.width;
+  const height = bounds.height;
 
-  if(!w)return;
+  const checkins = entries.filter(entry=>
+    entry.type==="feeling" &&
+    Number.isInteger(entry.level) &&
+    levels[entry.level]
+  );
 
-  canvas.width=w*ratio;
-  canvas.height=h*ratio;
+  $("checkinCount").textContent =
+    checkins.length+" check-ins";
 
-  ctx.scale(ratio,ratio);
+  const points = checkins.slice(0,14).reverse();
 
-  const css=getComputedStyle(document.body);
+  $("chartEmpty").hidden = points.length>0;
 
-  const muted=
-    css.getPropertyValue("--muted").trim();
+  context.clearRect(0,0,width,height);
 
-  const line=
-    css.getPropertyValue("--line").trim();
+  if(!points.length || width<150) return;
 
-  const accent=
-    css.getPropertyValue("--accent").trim();
+  const style = getComputedStyle(
+    document.documentElement
+  );
 
-  const data=entries.filter(e=>
-    e.type==="feeling" &&
-    e.level>=0 &&
-    e.level<=4
-  ).slice(0,14).reverse();
+  const muted =
+    style.getPropertyValue("--muted").trim();
 
-  const pad=24;
+  const line =
+    style.getPropertyValue("--line").trim();
 
-  for(let i=0;i<5;i++){
+  const left = width<400 ? 92 : 120;
+  const right = 16;
+  const top = 20;
+  const bottom = 38;
 
-    const y=pad+i*(h-pad*2)/4;
+  const graphWidth = width-left-right;
+  const graphHeight = height-top-bottom;
 
-    ctx.strokeStyle=line;
+  context.font = "11px Arial";
+  context.textBaseline = "middle";
 
-    ctx.beginPath();
-    ctx.moveTo(pad,y);
-    ctx.lineTo(w-pad,y);
-    ctx.stroke();
-  }
+  levels.forEach((level,index)=>{
+    const y = top+(4-index)/4*graphHeight;
 
-  if(!data.length){
+    context.strokeStyle = line;
+    context.lineWidth = 1;
 
-    ctx.fillStyle=muted;
-    ctx.font="14px Arial";
-    ctx.textAlign="center";
+    context.beginPath();
+    context.moveTo(left,y);
+    context.lineTo(width-right,y);
+    context.stroke();
 
-    ctx.fillText(
-      "Your check-ins will appear here",
-      w/2,
-      h/2
-    );
+    context.fillStyle = muted;
+    context.fillText(level.name,0,y);
+  });
 
-    return;
-  }
+  const coordinates = points.map((entry,index)=>({
+    x:points.length===1
+      ? left+graphWidth/2
+      : left+index/(points.length-1)*graphWidth,
 
-  const points=data.map((e,i)=>({
+    y:top+(4-entry.level)/4*graphHeight,
 
-    x:data.length===1
-      ?w/2
-      :pad+i*(w-pad*2)/(data.length-1),
-
-    y:h-pad-e.level*(h-pad*2)/4,
-
-    level:e.level
+    entry
   }));
 
-  ctx.strokeStyle=accent;
-  ctx.lineWidth=3;
+  if(coordinates.length>1){
+    const gradient = context.createLinearGradient(
+      0,top,0,height-bottom
+    );
 
-  ctx.beginPath();
+    gradient.addColorStop(
+      0,"rgba(120,201,154,.20)"
+    );
 
-  points.forEach((p,i)=>{
+    gradient.addColorStop(
+      1,"rgba(120,201,154,0)"
+    );
 
-    if(i===0){
-      ctx.moveTo(p.x,p.y);
-    }else{
-      ctx.lineTo(p.x,p.y);
+    context.beginPath();
+
+    coordinates.forEach((point,index)=>{
+      if(index===0){
+        context.moveTo(point.x,point.y);
+      }else{
+        context.lineTo(point.x,point.y);
+      }
+    });
+
+    context.lineTo(
+      coordinates[coordinates.length-1].x,
+      height-bottom
+    );
+
+    context.lineTo(
+      coordinates[0].x,
+      height-bottom
+    );
+
+    context.closePath();
+    context.fillStyle = gradient;
+    context.fill();
+
+    context.beginPath();
+
+    coordinates.forEach((point,index)=>{
+      if(index===0){
+        context.moveTo(point.x,point.y);
+      }else{
+        context.lineTo(point.x,point.y);
+      }
+    });
+
+    context.strokeStyle = "#78c99a";
+    context.lineWidth = 2.5;
+    context.lineJoin = "round";
+    context.stroke();
+  }
+
+  coordinates.forEach((point,index)=>{
+    context.beginPath();
+
+    context.arc(
+      point.x,point.y,4.5,0,Math.PI*2
+    );
+
+    context.fillStyle =
+      levels[point.entry.level].color;
+
+    context.fill();
+
+    if(
+      index===0 ||
+      index===coordinates.length-1
+    ){
+      const label =
+        new Date(point.entry.time)
+          .toLocaleDateString([],{
+            month:"short",
+            day:"numeric"
+          });
+
+      context.fillStyle = muted;
+
+      context.textAlign =
+        coordinates.length===1
+          ? "center"
+          : index===0?"left":"right";
+
+      context.fillText(
+        label,point.x,height-12
+      );
     }
   });
 
-  ctx.stroke();
-
-  points.forEach(p=>{
-
-    ctx.fillStyle=colors[p.level];
-
-    ctx.beginPath();
-
-    ctx.arc(
-      p.x,
-      p.y,
-      5,
-      0,
-      Math.PI*2
-    );
-
-    ctx.fill();
-  });
-}
-
-/* INITIALIZE */
-
-function render(){
-
-  renderFeelings();
-  renderHistory();
-  renderSleep();
-  drawChart();
-
-  $("waterTotal").textContent=
-    todayTotal("water")+" mL";
-
-  $("restTotal").textContent=
-    todayTotal("rest")+" min";
-
-  const temp=latest("temperature");
-
-  $("latestTemp").textContent=temp
-    ?"Latest reading: "+
-      temp.value+"°"+temp.unit
-    :"No readings yet.";
+  context.textAlign = "left";
 }
 
 window.addEventListener("resize",drawChart);
 
-render();
+/* ACTIVITY HISTORY */
+
+const historyIcons = {
+  feeling:
+    '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+
+  symptoms:
+    '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/>',
+
+  temperature:
+    '<path d="M9 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Z"/>',
+
+  water:
+    '<path d="M12 2C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/>',
+
+  rest:
+    '<path d="M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11Z"/>',
+
+  medicine:
+    '<rect x="6" y="4" width="12" height="17" rx="3"/><path d="M9 13h6M12 10v6"/>',
+
+  journal:
+    '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>'
+};
+
+function describeEntry(entry){
+  switch(entry.type){
+
+    case "feeling":
+      return [
+        "Sickness check-in",
+        levels[entry.level]?.name || "Unknown rating"
+      ];
+
+    case "symptoms":
+      return [
+        "Symptoms",
+        Array.isArray(entry.symptoms) &&
+        entry.symptoms.length
+          ? entry.symptoms.join(", ")
+          : "No symptoms reported"
+      ];
+
+    case "temperature":
+      return [
+        "Temperature",
+        entry.value+"°"+entry.unit
+      ];
+
+    case "water":
+      return [
+        "Hydration",
+        roundValue(entryAmount(entry))+" cup(s)"
+      ];
+
+    case "rest":
+      return [
+        "Rest",
+        roundValue(entryAmount(entry))+" hour(s)"
+      ];
+
+    case "medicine":
+      return [
+        "Medication recorded",
+        entry.name+
+          (entry.notes?" — "+entry.notes:"")
+      ];
+
+    case "journal":
+      return [
+        "Journal entry",
+        entry.text
+      ];
+
+    default:
+      return ["Entry","Recorded activity"];
+  }
+}
+
+function renderHistory(){
+  const list = $("historyList");
+  const filter = $("historyFilter").value;
+
+  list.replaceChildren();
+
+  const filtered = entries.filter(entry=>
+    filter==="all" || entry.type===filter
+  );
+
+  if(!filtered.length){
+    list.append(
+      make("div","empty","No recorded activity yet.")
+    );
+    return;
+  }
+
+  filtered.forEach(entry=>{
+    const item = make("article","history-item");
+    const icon = make("div","history-icon");
+
+    const path = Object.hasOwn(historyIcons,entry.type)
+      ? historyIcons[entry.type]
+      : historyIcons.journal;
+
+    icon.innerHTML =
+      '<svg viewBox="0 0 24 24">'+
+      path+
+      '</svg>';
+
+    const info = make("div","history-info");
+
+    const [title,description] = describeEntry(entry);
+
+    const detail = make(
+      "p","muted small",description
+    );
+
+    if(
+      entry.type==="feeling" &&
+      levels[entry.level]
+    ){
+      detail.style.color = levels[entry.level].color;
+    }
+
+    info.append(
+      make("strong","",title),
+      detail,
+      make("small","",formatTime(entry.time))
+    );
+
+    const remove = make("button","delete-btn");
+
+    remove.setAttribute(
+      "aria-label",
+      "Delete "+title
+    );
+
+    remove.innerHTML = `
+      <svg viewBox="0 0 24 24">
+        <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15"/>
+        <path d="M10 10v7M14 10v7"/>
+      </svg>
+    `;
+
+    remove.onclick = ()=>deleteEntry(entry.id);
+
+    item.append(icon,info,remove);
+
+    list.append(item);
+  });
+}
+
+$("historyFilter").onchange = renderHistory;
+
+/* THEMES */
+
+function applyTheme(theme){
+  if(theme==="dark") theme="gray";
+
+  if(!["gray","charcoal","light"].includes(theme)){
+    theme="gray";
+  }
+
+  document.documentElement.dataset.theme = theme;
+
+  document.querySelectorAll(".theme-btn")
+    .forEach(button=>{
+      const active = button.dataset.theme===theme;
+
+      button.classList.toggle("active",active);
+
+      button.setAttribute(
+        "aria-pressed",
+        String(active)
+      );
+    });
+
+  try{
+    localStorage.setItem(THEME_KEY,theme);
+  }catch{}
+
+  drawChart();
+}
+
+document.querySelectorAll(".theme-btn")
+  .forEach(button=>{
+    button.onclick = ()=>{
+      applyTheme(button.dataset.theme);
+    };
+  });
+
+/* CLEAR RECOVERY DATA */
+
+$("clearData").onclick = ()=>{
+  if(!confirm(
+    "Permanently delete all recovery check-ins, "+
+    "symptoms, temperature readings, hydration, "+
+    "rest, medication logs and journal entries? "+
+    "Imported sleep records will remain saved."
+  )){
+    return;
+  }
+
+  try{
+    localStorage.removeItem(STORAGE_KEY);
+  }catch{
+    showToast("Unable to clear browser storage.");
+    return;
+  }
+
+  entries = [];
+  selectedFeeling = null;
+
+  $("symptoms").querySelectorAll("input")
+    .forEach(input=>input.checked=false);
+
+  [
+    "otherSymptoms",
+    "temperatureInput",
+    "restInput",
+    "medicineName",
+    "medicineNotes",
+    "journalInput"
+  ].forEach(id=>$(id).value="");
+
+  document.querySelectorAll(".form-status")
+    .forEach(element=>element.textContent="");
+
+  renderFeelings();
+  renderDashboard();
+
+  showToast("All recovery data cleared.");
+};
+
+/* INITIALIZE */
+
+function renderDashboard(){
+  renderSummary();
+  renderHistory();
+  drawChart();
+}
+
+document.querySelectorAll(".card")
+  .forEach((card,index)=>{
+    card.style.setProperty("--i",Math.min(index,10));
+  });
+
+loadData();
+
+let savedTheme = "gray";
+
+try{
+  savedTheme =
+    localStorage.getItem(THEME_KEY)||"gray";
+
+  // Supports the JSON-encoded theme from Version 1.1.
+  if(savedTheme.startsWith('"')){
+    savedTheme = JSON.parse(savedTheme);
+  }
+}catch{
+  savedTheme = "gray";
+}
+
+applyTheme(savedTheme);
+
+renderFeelings();
+renderDashboard();
+renderSleep();
+
+setInterval(renderSummary,60000);
+
+startIntro();
 
 </script>
 
