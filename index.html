@@ -3577,5 +3577,534 @@ startIntro();
 
 </script>
 
-</body>
+
+<script>
+/* RECOVERY. VERSION 1.3 — ONE-TAP SYNC */
+
+(() => {
+  "use strict";
+
+  const pendingKey = "recovery-sync-pending-v1";
+  const returnURL =
+    "https://aiden1226.github.io/Recovery-/?sync=1";
+
+  let syncing = false;
+
+  // Update branding and version.
+  document.title = "Recovery.";
+
+  document.querySelector(".intro-title").textContent =
+    "Recovery.";
+
+  document.querySelector(".header h1").textContent =
+    "Recovery.";
+
+  document.querySelector(".version").textContent =
+    "V1.3";
+
+  $("intro").setAttribute(
+    "aria-label",
+    "Welcome to Recovery"
+  );
+
+  const footer = document.querySelector("footer");
+
+  footer.innerHTML = `
+    &copy; 2026 Aiden · Recovery.
+    <p style="margin-top:5px">
+      Rest. Recover. Take care.
+    </p>
+    <p style="margin-top:8px">
+      Version 1.3
+    </p>
+  `;
+
+  // Additional styles matching Version 1.2.
+  const style = document.createElement("style");
+
+  style.textContent = `
+    #syncHealth{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:9px;
+    }
+
+    #syncHealth:disabled{
+      opacity:.6;
+      cursor:wait;
+    }
+
+    #syncMessage{
+      text-align:center;
+      font-size:13px;
+      color:var(--muted);
+      margin-top:12px;
+      line-height:1.6;
+    }
+
+    #syncMessage.success{
+      color:var(--green);
+    }
+
+    #syncMessage.error{
+      color:var(--red);
+    }
+
+    #connectHealth{
+      width:100%;
+      background:transparent;
+      color:var(--muted);
+      border:1px solid var(--line);
+    }
+
+    #finishSync{
+      width:100%;
+      margin-top:10px;
+    }
+
+    .sync-spinner{
+      width:17px;
+      height:17px;
+      border:2px solid currentColor;
+      border-right-color:transparent;
+      border-radius:50%;
+      animation:recoverySpin .8s linear infinite;
+    }
+
+    @keyframes recoverySpin{
+      to{transform:rotate(360deg)}
+    }
+  `;
+
+  document.head.append(style);
+
+  const syncButton = $("syncHealth");
+  const settingsButton = $("connectHealth");
+  const actions = document.querySelector(".health-actions");
+
+  syncButton.className = "primary";
+  syncButton.textContent = "Sync Apple Health";
+
+  settingsButton.className = "secondary";
+  settingsButton.textContent = "Connection Settings";
+
+  $("importHealth").hidden = true;
+  $("disconnectHealth").hidden = true;
+
+  actions.prepend(syncButton);
+  actions.append(settingsButton);
+
+  const message = document.createElement("p");
+
+  message.id = "syncMessage";
+  message.setAttribute("role","status");
+  message.setAttribute("aria-live","polite");
+
+  actions.after(message);
+
+  const finishButton = document.createElement("button");
+
+  finishButton.id = "finishSync";
+  finishButton.className = "primary";
+  finishButton.textContent = "Finish sync";
+  finishButton.hidden = true;
+
+  message.after(finishButton);
+
+  function status(text,type=""){
+    message.textContent = text;
+    message.className = type;
+  }
+
+  function setBusy(active){
+    syncing = active;
+    syncButton.disabled = active;
+
+    if(active){
+      syncButton.innerHTML = `
+        <span class="sync-spinner"></span>
+        Syncing Apple Health...
+      `;
+    }else{
+      syncButton.textContent = "Sync Apple Health";
+    }
+  }
+
+  function markPending(){
+    try{
+      localStorage.setItem(
+        pendingKey,
+        String(Date.now())
+      );
+    }catch{}
+  }
+
+  function clearPending(){
+    try{
+      localStorage.removeItem(pendingKey);
+    }catch{}
+  }
+
+  function hasPending(){
+    try{
+      const time = Number(
+        localStorage.getItem(pendingKey)
+      );
+
+      const age = Date.now()-time;
+
+      return time>0 &&
+        age>=0 &&
+        age<10*60*1000;
+    }catch{
+      return false;
+    }
+  }
+
+  function cleanReturnURL(){
+    const url = new URL(location.href);
+
+    url.searchParams.delete("sync");
+
+    history.replaceState(
+      history.state,
+      "",
+      url.pathname+url.search+url.hash
+    );
+  }
+
+  // Launch the existing Apple Shortcut.
+  function startSync(){
+    markPending();
+
+    finishButton.hidden = true;
+
+    status(
+      "Opening Sick Sleep Sync..."
+    );
+
+    window.location.href =
+      "shortcuts://run-shortcut?name="+
+      encodeURIComponent(SHORTCUT_NAME);
+  }
+
+  syncButton.onclick = startSync;
+
+  $("runShortcut").onclick = ()=>{
+    $("connectDialog").close();
+    startSync();
+  };
+
+  // Import plain-text sleep records.
+  function importSyncedRecords(text){
+
+    if(typeof text!=="string" ||
+       !text.trim() ||
+       text.length>1000000){
+
+      throw new Error(
+        "No readable sleep export found."
+      );
+    }
+
+    const result = parseSleep(text);
+
+    if(!result.records.length){
+      throw new Error(
+        "The clipboard does not contain valid sleep records."
+      );
+    }
+
+    // Reject clipboard contents containing unrelated text.
+    if(result.skipped>0){
+      throw new Error(
+        "Some records could not be verified. Use manual import."
+      );
+    }
+
+    const unique = new Map();
+
+    for(const record of health.records){
+      unique.set(
+        record.start+"|"+
+        record.end+"|"+
+        record.stage,
+        record
+      );
+    }
+
+    const previousCount = unique.size;
+
+    for(const record of result.records){
+      unique.set(
+        record.start+"|"+
+        record.end+"|"+
+        record.stage,
+        record
+      );
+    }
+
+    const added = unique.size-previousCount;
+
+    const duplicates =
+      result.records.length-added;
+
+    health = {
+      records:[...unique.values()]
+        .sort((a,b)=>b.end-a.end),
+
+      lastSync:new Date().toISOString()
+    };
+
+    const saved = persistHealth();
+
+    renderSleep();
+
+    clearPending();
+    cleanReturnURL();
+
+    finishButton.hidden = true;
+
+    if(saved){
+      status(
+        added>0
+          ? "Sync complete — "+added+
+            " new records added."
+          : "Sync complete — already up to date.",
+        "success"
+      );
+
+      syncButton.textContent =
+        "Sync complete";
+
+      showToast(
+        "Apple Health synced successfully"
+      );
+    }else{
+      status(
+        "Imported for this session only. "+
+        "Browser storage is unavailable.",
+        "error"
+      );
+    }
+
+    if(duplicates>0){
+      message.textContent +=
+        " "+duplicates+
+        " duplicates ignored.";
+    }
+  }
+
+  // Safari may require a direct tap to read the clipboard.
+  async function completeSync(){
+
+    if(syncing) return;
+
+    setBusy(true);
+
+    status("Reading copied sleep records...");
+
+    try{
+      if(!navigator.clipboard?.readText){
+        throw new Error(
+          "Clipboard access unavailable."
+        );
+      }
+
+      const text =
+        await navigator.clipboard.readText();
+
+      importSyncedRecords(text);
+
+    }catch(error){
+
+      status(
+        "Tap Finish sync to allow clipboard access. "+
+        "If it still fails, use manual import in Connection Settings.",
+        "error"
+      );
+
+      finishButton.hidden = false;
+
+    }finally{
+
+      setBusy(false);
+
+    }
+  }
+
+  finishButton.onclick = completeSync;
+
+  // Simplified connection settings.
+  const connection = $("connectDialog");
+
+  connection.innerHTML = `
+    <h2>Connection Settings</h2>
+
+    <p class="muted small">
+      Manage your read-only Apple Health
+      sleep sync.
+    </p>
+
+    <div class="dialog-step">
+      <div class="step-number">1</div>
+      <div>
+        <strong>Install Apple Shortcut</strong>
+
+        <p class="muted small">
+          Install Sick Sleep Sync and review
+          its actions before granting access.
+          Make sure the shortcut includes the
+          website return URL.
+        </p>
+
+        <button class="primary"
+          id="v13Install"
+          style="margin-top:12px">
+          Install Shortcut
+        </button>
+      </div>
+    </div>
+
+    <div class="dialog-step">
+      <div class="step-number">2</div>
+      <div>
+        <strong>Shortcut setup</strong>
+
+        <p class="muted small">
+          The shortcut must be named exactly
+          Sick Sleep Sync.
+        </p>
+
+        <p class="muted small"
+          style="margin-top:8px">
+          After Copy to Clipboard, add a URL
+          action followed by Open URLs.
+        </p>
+
+        <input class="field"
+          id="returnAddress"
+          readonly
+          style="margin-top:12px">
+
+        <button class="secondary"
+          id="copyReturnAddress"
+          style="margin-top:8px">
+          Copy return URL
+        </button>
+      </div>
+    </div>
+
+    <div class="dialog-step">
+      <div class="step-number">3</div>
+      <div>
+        <strong>Manual import</strong>
+
+        <p class="muted small">
+          Use this option if automatic
+          clipboard importing is unavailable.
+        </p>
+
+        <button class="secondary"
+          id="v13Manual"
+          style="margin-top:12px">
+          Import sleep data
+        </button>
+      </div>
+    </div>
+
+    <button class="secondary danger wide"
+      id="v13Disconnect"
+      style="margin-top:16px">
+      Disconnect &amp; clear imported sleep
+    </button>
+
+    <button class="secondary wide"
+      id="v13Close"
+      style="margin-top:8px">
+      Close
+    </button>
+  `;
+
+  $("returnAddress").value = returnURL;
+
+  $("v13Install").onclick = ()=>{
+    window.open(
+      SHORTCUT_URL,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  $("copyReturnAddress").onclick = async ()=>{
+    try{
+      await navigator.clipboard.writeText(
+        returnURL
+      );
+
+      $("copyReturnAddress").textContent =
+        "Copied!";
+    }catch{
+      $("returnAddress").select();
+    }
+  };
+
+  $("v13Manual").onclick = ()=>{
+    connection.close();
+    openImport();
+  };
+
+  $("v13Disconnect").onclick = ()=>{
+    connection.close();
+
+    $("disconnectHealth").click();
+
+    clearPending();
+
+    finishButton.hidden = true;
+
+    status("");
+  };
+
+  $("v13Close").onclick = ()=>{
+    connection.close();
+  };
+
+  // Handle the return from Apple Shortcuts.
+  const returnedFromShortcut =
+    new URL(location.href)
+      .searchParams.get("sync")==="1";
+
+  if(returnedFromShortcut){
+
+    finishIntro();
+
+    if(hasPending()){
+
+      status(
+        "Sleep export received. Completing sync..."
+      );
+
+      completeSync();
+
+    }else{
+
+      // Do not automatically read unrelated
+      // clipboard contents on ordinary visits.
+
+      status(
+        "Tap Finish sync if you just ran "+
+        "Sick Sleep Sync."
+      );
+
+      finishButton.hidden = false;
+
+    }
+  }
+
+})();
+</script>
+ </body>
 </html>
